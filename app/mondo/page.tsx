@@ -3,12 +3,39 @@ import Image from "next/image";
 
 import type { Luogo } from "@/lib/canone";
 import { gruppi, luoghiPerTipo, personaggi, personaggiPerGruppo } from "@/lib/canone";
+import { casaPrincipale, conArticolo, nomeQuartiere, storieDi } from "@/lib/dove";
 
 export const metadata: Metadata = {
   title: "Chi ci vive",
   description:
     "I tre fratelli, gli animali del villaggio, chi tiene in piedi l'isola e i cinque cuccioli della scuola.",
 };
+
+/*
+ * Dove abita un personaggio e quante storie lo vedono in scena: viene tutto da
+ * `lib/legami.ts`, cioè dal canone. Otto dei diciotto non hanno una casa
+ * georiferita — i tre fratelli e i cinque cuccioli — e per loro la riga non
+ * compare: meglio tacere che inventare un indirizzo.
+ */
+function Legami({ id }: { id: string }) {
+  const casa = casaPrincipale(id);
+  const quante = storieDi(id).length;
+
+  return (
+    <p className="abitante-legami">
+      {casa && (
+        <span>
+          Vive {conArticolo(casa.nome)}, nel {nomeQuartiere(casa.quartiere)}.{" "}
+        </span>
+      )}
+      {quante > 0 && (
+        <span className="abitante-quante">
+          {quante === 12 ? "In tutte e dodici le storie." : `In ${quante} delle dodici storie.`}
+        </span>
+      )}
+    </p>
+  );
+}
 
 function SchedaLuogo({ luogo, largo = false }: { luogo: Luogo; largo?: boolean }) {
   return (
@@ -68,6 +95,7 @@ export default function Mondo() {
                       <h3>{p.nome}</h3>
                       <span className="abitante-specie">{p.specie}</span>
                       <p>{p.riga}</p>
+                      <Legami id={p.id} />
                     </div>
                   </article>
                 ))}

@@ -42,6 +42,14 @@ const voci = [
   },
 ];
 
+/*
+ * Le didascalie descrivono quello che l'immagine mostra davvero, e in due casi
+ * questo ha voluto dire correggere il nome che il file si porta dietro dal
+ * canone: `che-dorme` è un'alba con le barche già fuori, e in `notturna` la
+ * luna piena si vede benissimo. I nomi dei file restano quelli — rinominarli
+ * costerebbe un giro di service worker per niente - ma il testo dice il vero.
+ * Chi rilegge non li "aggiusti" all'indietro.
+ */
 const atmosfere = [
   {
     file: "panoramica",
@@ -49,11 +57,11 @@ const atmosfere = [
   },
   {
     file: "che-dorme",
-    testo: "L'isola che dorme.",
+    testo: "L'isola all'alba: il sole basso sul mare, le prime barche già fuori.",
   },
   {
     file: "notturna",
-    testo: "L'isola di notte, senza luna.",
+    testo: "L'isola di notte, sotto la luna piena, con le finestre accese.",
   },
 ];
 

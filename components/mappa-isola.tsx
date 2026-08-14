@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { getStoria, personaggi } from "@/lib/canone";
 import { storiePerLuogo } from "@/lib/legami";
+import { COLORI_QUARTIERE, nomeQuartiere } from "@/lib/dove";
 import { segniConLuogo } from "@/lib/mappa-posizioni";
 
 /*
@@ -22,15 +23,6 @@ import { segniConLuogo } from "@/lib/mappa-posizioni";
  * quali storie ci passano. Chi clicca scende alla scheda; chi non può cliccare
  * la trova comunque, in ordine. La mappa è l'indice, l'elenco è il contenuto.
  */
-
-const QUARTIERI: Record<string, { nome: string; colore: string }> = {
-  aria: { nome: "quartiere d’Aria", colore: "var(--taglio)" },
-  fuoco: { nome: "quartiere di Fuoco", colore: "var(--mulinello-testo)" },
-  acqua: { nome: "quartiere d’Acqua", colore: "var(--taglio)" },
-  terra: { nome: "quartiere di Terra", colore: "var(--intreccio)" },
-  centro: { nome: "villaggio", colore: "var(--morbido)" },
-  perimetro: { nome: "attorno all’isola", colore: "var(--taglio)" },
-};
 
 /** Lo scostamento dell'etichetta dal segno, in unità di viewBox. */
 const SCOSTAMENTO = 17;
@@ -60,8 +52,7 @@ export function MappaIsola() {
         <svg className="mappa-segni" viewBox="0 0 1000 1500" aria-hidden="false">
           {voci.map(({ segno, luogo }) => {
             const { dx, dy, ancora } = posizioneEtichetta(segno.etichetta);
-            const quartiere = QUARTIERI[luogo.quartiere ?? "centro"];
-            const nome = `${luogo.nome} — ${quartiere.nome}`;
+            const nome = `${luogo.nome} — ${nomeQuartiere(luogo.quartiere)}`;
 
             return (
               <a
@@ -76,7 +67,7 @@ export function MappaIsola() {
                   cy={segno.y}
                   r="10"
                   fill="var(--carta-alta)"
-                  stroke={quartiere.colore}
+                  stroke={COLORI_QUARTIERE[luogo.quartiere ?? "centro"]}
                   strokeWidth="4"
                 />
                 <text
@@ -103,7 +94,7 @@ export function MappaIsola() {
           return (
             <li className="mappa-scheda" id={`luogo-${segno.id}`} key={segno.id}>
               <h3>{luogo.nome}</h3>
-              <p className="mappa-scheda-dove">{QUARTIERI[luogo.quartiere ?? "centro"].nome}</p>
+              <p className="mappa-scheda-dove">{nomeQuartiere(luogo.quartiere)}</p>
 
               {abitante && (
                 <p className="mappa-scheda-abita">
