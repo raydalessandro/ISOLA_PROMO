@@ -142,3 +142,18 @@
   font-size: 0.95rem;
   margin-top: 0.4rem;
 }
+
+/* Dove abita un abitante e quante storie lo vedono: viene dal canone, quindi
+   sta sotto la sua riga come una nota di servizio, non come titolo. */
+.abitante-legami {
+  border-top: 1px solid var(--bordo);
+  color: var(--tenue);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  margin-top: 0.7rem;
+  padding-top: 0.55rem;
+}
+
+.abitante-quante {
+  white-space: nowrap;
+}

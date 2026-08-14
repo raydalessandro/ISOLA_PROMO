@@ -88,3 +88,21 @@
   font-size: 1.25rem;
   margin-bottom: 0.6rem;
 }
+
+/* Quando succede la storia e per dove passa. Il momento in evidenza, i luoghi
+   di seguito: si legge come una didascalia, non come un'etichetta. */
+.storia-dove {
+  color: var(--tenue);
+  /* Il numero della storia occupa la prima colonna per due righe: senza questo
+     la riga finirebbe sotto di lui invece che sotto il testo. */
+  grid-column: 2;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  margin-top: 0.5rem;
+}
+
+.storia-dove b {
+  color: var(--morbido);
+  font-weight: 700;
+}

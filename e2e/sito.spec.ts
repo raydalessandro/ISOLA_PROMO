@@ -82,6 +82,43 @@ test.describe("le superfici del sito", () => {
    * funzionare **senza JavaScript**, quindi i segni sono ancore vere: qui si
    * verifica che ognuna abbia il suo bersaglio, non solo che esista il segno.
    */
+  /*
+   * I legami del canone devono affiorare anche fuori dalla mappa: su /mondo
+   * ogni abitante dice dove sta, su /storie ogni storia dice quando succede e
+   * per dove passa. Sono le stesse due proiezioni, lette da superfici diverse:
+   * se una si scollega, si scollega qui.
+   */
+  test("ogni abitante dice dove sta e in quante storie compare", async ({ page }) => {
+    await page.goto("/mondo");
+
+    await expect(page.locator(".abitante-legami")).toHaveCount(18);
+
+    // Fiamma e' il caso completo: casa nel canone piu' presenze nelle storie.
+    const fiamma = page.locator(".abitante").filter({ hasText: "Fiamma" }).first();
+    await expect(fiamma).toContainText("Forno di Fiamma");
+    await expect(fiamma).toContainText("quartiere di Fuoco");
+
+    // Gli otto senza casa georiferita non se ne inventano una.
+    const noah = page.locator(".abitante").filter({ hasText: "Noah" }).first();
+    await expect(noah).not.toContainText("Vive");
+    await expect(noah).toContainText("dodici");
+  });
+
+  test("ogni storia dice quando succede e per dove passa, mai come finisce", async ({ page }) => {
+    await page.goto("/storie");
+
+    await expect(page.locator(".storia-dove")).toHaveCount(12);
+
+    const prima = page.locator(".storia").first();
+    await expect(prima).toContainText("Inverno");
+    await expect(prima).toContainText("di notte");
+    await expect(prima).toContainText("Montagne Gemelle");
+
+    // I sentieri restano fuori: nominarli non direbbe niente a nessuno.
+    const righe = await page.locator(".storia-dove").allInnerTexts();
+    expect(righe.filter((r) => /Sentiero|Viottolo/.test(r))).toEqual([]);
+  });
+
   test("ogni segno sulla mappa porta alla scheda del suo luogo", async ({ page }) => {
     await page.goto("/mappa");
 
