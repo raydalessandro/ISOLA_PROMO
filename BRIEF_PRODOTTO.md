@@ -38,7 +38,7 @@ prima di procedere.
 
 `raydalessandro/isola_i3v_visual`:
 
-- `visual/` — 185 illustrazioni canoniche, schede di 116 entità;
+- `visual/` — 183 illustrazioni canoniche, schede di 116 entità;
 - `cartografia/geo/island.geojson` — **105 feature georiferite** con `name`, `category`, `type`,
   `quarter`, `parent`, `elevation_m`, `flow_direction`;
 - `pipeline_narrativa/story_graph.json` — grafo delle 12 storie;
@@ -68,7 +68,11 @@ Materiale canonico che invece **esiste** ed è utilizzabile:
 | acqua | `visual/luoghi/quartiere_acqua/spiaggia_conchiglie/immagini/spiaggia_conchiglie_canonica_v1_panoramica.jpg` |
 | terra | `visual/luoghi/quartiere_terra/orti_del_cerchio/immagini/orti_del_cerchio_canonica_v1_panoramica.jpg` |
 | terra | `visual/luoghi/quartiere_terra/foresta_intrecciata/immagini/foresta_intrecciata_canonica_v1_interno.jpg` |
-| terra | `visual/luoghi/quartiere_terra/radura_dei_pini/immagini/radura_dei_pini_canonica_v1_margine.jpg` |
+| terra | `visual/luoghi/quartiere_terra/foresta_intrecciata/radura_dei_pini/immagini/radura_dei_pini_canonica_v1_margine.jpg` |
+| terra | `visual/luoghi/quartiere_terra/orti_del_cerchio/immagini/orti_del_cerchio_canonica_v1_coltivatori_al_lavoro.jpg` |
+
+I cinque percorsi qui sopra sono verificati sul canone: esistono verbatim. La radura dei
+pini sta **dentro** `foresta_intrecciata/`, non direttamente sotto il quartiere.
 
 E fra le social già nel sito: `v2-11-bartolo-mattino-cover` (il pontile all'alba, acqua),
 `v2-18-amo-riva-carousel` (la Bocca, acqua), `v2-17-zolla-orti-cover` (gli Orti, terra).
