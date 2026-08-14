@@ -430,6 +430,10 @@ export const libro = {
   titolo: "L’Isola dei Tre Venti",
   sottotitolo: "Volume 1 — Il vento che taglia",
   eta: "Dai 3 ai 6 anni",
+  /* Gli stessi estremi in forma di numero: i dati strutturati non devono
+     dedurli da una frase. Stanno sulla quarta di copertina del Volume 1. */
+  etaMin: 3,
+  etaMax: 6,
   storie: ["s01", "s02", "s03"],
   descrizione:
     "In questo primo volume soffia il Vento Taglio, quello che fa vedere dove finisce una cosa e dove ne comincia un’altra. Tre storie da leggere ad alta voce, una per sera.",
