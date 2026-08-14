@@ -40,6 +40,35 @@ automatica, nessuna seconda verità.
 Delle storie si pubblicano **titolo e una riga**. I racconti stanno nei libri: le righe dicono
 dove si va, non come va a finire.
 
+### I legami fra le cose
+
+`lib/canone.ts` dice chi sono i personaggi e quali sono le storie. `lib/legami.ts` dice
+**dove stanno**: quali luoghi compongono ciascun quartiere, chi ci abita, per dove passano le
+dodici storie e in che stagione.
+
+Non è scritto a mano: lo genera `scripts/estrai-legami.mjs` da due file del canone —
+`cartografia/geo/island.geojson` (105 luoghi georiferiti) e `pipeline_narrativa/story_graph.json`.
+Il bello è che le chiavi combaciano già da sole: la proprietà `inhabitant` dei luoghi usa gli
+stessi identificativi dei personaggi di `canone.ts`, e `characters_in_scene` delle storie pure.
+Nessuna tabella di corrispondenza da mantenere.
+
+```bash
+node scripts/estrai-legami.mjs --canone ../isola_i3v_visual
+```
+
+Si lancia a mano, con il canone checkato a parte, e l'output si committa. **Il sito non dipende
+dal canone in build**: `npm run check` gira anche su una macchina che non ce l'ha. Il canone è un
+altro repo, in sola lettura, e cambia senza avvisare questo: per questo `e2e/legami.spec.ts`
+verifica che le due proiezioni continuino a combaciare.
+
+Delle storie escono il dove e il quando — stagione, vento, notte, quartieri attraversati, chi c'è
+in scena — e mai come vanno a finire. Il grafo è un documento di lavorazione pieno di finali: lo
+script elenca i campi ammessi uno per uno, così un campo nuovo non arriva sul sito da solo.
+
+Le coordinate sono proiettate in unità di viewBox SVG, pronte da disegnare. Il riquadro inquadra
+l'isola: le due "Isole all'Orizzonte" restano nel modulo ma cadono fuori dal riquadro, che è poi
+dove stanno davvero.
+
 ### Immagini
 
 `public/media/` contiene le illustrazioni canoniche convertite in WebP a due larghezze
@@ -48,7 +77,7 @@ dove si va, non come va a finire.
 | Cartella | Cosa contiene | Sorgente |
 |---|---|---|
 | `personaggi/` | i 18 ritratti canonici | `visual/personaggi/individuali/` |
-| `luoghi/` | villaggio, quartiere di Fuoco, quartiere d'Aria | `visual/atlante/tavole/` |
+| `luoghi/` | il villaggio e i quattro quartieri | `visual/atlante/tavole/`, e per Acqua e Terra `visual/luoghi/` |
 | `isola/` | arte di copertina, mappa aerea, panoramica, notturna | `visual/atlante/` |
 | `emblema/` | il rosone dei tre venti, marchio del sito | `visual/atlante/emblema/` |
 | `libro/` | i tre render del Volume 1 stampato | originali di Ray |
@@ -148,7 +177,8 @@ components/
   icone.tsx         icone della barra bassa
   gioco/            console e stili non globali del gioco
 lib/
-  canone.ts         fonte unica
+  canone.ts         fonte unica, scritta a mano
+  legami.ts         luoghi, abitanti e storie: generato dal canone
   gioco/            motore portato dal prototipo
 e2e/                test Playwright
 public/
@@ -156,8 +186,9 @@ public/
   media/            illustrazioni
   sw.js             service worker
 scripts/
-  make-icons.mjs    rigenera le icone dal rosone
-  check-media.mjs   verifica l'integrità dei binari
+  make-icons.mjs     rigenera le icone dal rosone
+  check-media.mjs    verifica l'integrità dei binari
+  estrai-legami.mjs  rigenera lib/legami.ts dal canone
 ```
 
 ## Configurazione
