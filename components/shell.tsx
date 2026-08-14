@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -14,6 +13,7 @@ import {
   IconaMappa,
   IconaMondo,
   IconaStorie,
+  MarchioTrePunti,
 } from "@/components/icone";
 
 const voci = [
@@ -59,13 +59,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <header className="testata">
         <div className="testata-interno">
           <Link href="/" className="marchio">
-            <Image
-              src="/media/emblema/rosone-sm.webp"
-              alt=""
-              width={34}
-              height={33}
-              priority
-            />
+            <MarchioTrePunti className="marchio-segno" />
             <span className="marchio-testo">
               <b>L&rsquo;Isola dei Tre Venti</b>
               <small>{sito.editore}</small>
