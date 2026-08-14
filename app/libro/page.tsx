@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import { DatiStrutturatiLibro } from "@/components/dati-strutturati";
+import { baseUrlDelSito } from "@/lib/base-url";
 import { getStoria, libro, sito, volumi } from "@/lib/canone";
 
 export const metadata: Metadata = {
@@ -15,6 +17,8 @@ export default function Libro() {
 
   return (
     <>
+      <DatiStrutturatiLibro base={baseUrlDelSito()} />
+
       <section className="sezione">
         <div className="contenuto libro-apertura">
           <figure className="libro-scatto">

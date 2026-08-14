@@ -166,6 +166,17 @@ Finché quella data non c'è, `canali` in `lib/canone.ts` tiene `url: null` e la
 l'`url` e il collegamento compare ovunque, da un punto solo. Un test e2e verifica che dal sito
 non esca nessun link esterno finché i canali non esistono.
 
+## Dati strutturati
+
+`/libro` dichiara il Volume 1 in JSON-LD: titolo, autrice, editore, lingua, copertina rigida,
+fascia d'età, i tre racconti che contiene.
+
+Non dichiara **ISBN, data di pubblicazione, prezzo o disponibilità**. Il libro è stampato ma la
+scheda Amazon non ha ancora una data: scrivere quei campi adesso sarebbe la stessa cosa di un
+pulsante che non porta da nessuna parte, solo invisibile a chi legge e ben visibile a un motore
+di ricerca. Entrano il giorno in cui esistono. Un test in `e2e/rifiniture.spec.ts` verifica che
+non ci siano.
+
 ## Struttura
 
 ```
@@ -179,12 +190,15 @@ app/
   gioco/            l'avventura, a schermo pieno
   offline/          ricaduta del service worker
   manifest.ts       manifest PWA generato
+  sitemap.ts        le sette superfici, con URL assoluti
+  robots.ts         apre tutto tranne la ricaduta offline
   error.tsx  global-error.tsx  not-found.tsx
   globals.css       solo import
   styles/           base, shell, home, mondo, storie, mappa, libro
 components/
-  shell.tsx         testata, barra bassa, chiusura
-  icone.tsx         icone della barra bassa
+  shell.tsx           testata, barra bassa, chiusura
+  icone.tsx           icone della barra bassa
+  dati-strutturati.tsx JSON-LD del Volume 1
   gioco/            console e stili non globali del gioco
 lib/
   canone.ts         fonte unica, scritta a mano
