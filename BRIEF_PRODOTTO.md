@@ -49,6 +49,52 @@ Non generarla automaticamente e non allargarla con roba inventata.
 
 ---
 
+## Il principio: informazione vissuta, non scorsa
+
+Il sito ha sette superfici e ognuna è un elenco piatto dello stesso mondo. `/mondo` ha gli
+abitanti senza i loro luoghi. `/mappa` ha i luoghi senza i loro abitanti. `/storie` ha le storie
+senza né gli uni né gli altri. `/giornate` ha quaranta illustrazioni che mostrano quei luoghi e
+quegli abitanti, e non lo dice. Chi legge ricostruisce l'isola nella propria testa, oppure scorre
+e se ne va. Una landing page da leggere e basta non è più il modo in cui si conosce un mondo.
+
+**I collegamenti però esistono già nel canone, e le chiavi combaciano.** Non c'è niente da
+inventare: c'è da esporre quello che nel canone è già legato.
+
+| Da | A | Dove sta il legame | Verificato |
+|---|---|---|---|
+| luogo | abitante | `island.geojson`, proprietà `inhabitant` | 13 feature → 10 abitanti, id identici a `lib/canone.ts` |
+| luogo | quartiere | `island.geojson`, proprietà `quarter` | 105 feature su 105 |
+| storia | quartiere | `story_graph.json`, `quartieri_attraversati` | 12 storie su 12, tutti e quattro i quartieri |
+| storia | luogo | `story_graph.json`, `location_primary` + `locations_secondary` | 12 storie su 12 |
+| storia | personaggio | `story_graph.json`, `characters_in_scene` | i 18 personaggi del sito, id identici |
+| storia | stagione, vento, notte | `story_graph.json`, `season`, `wind_active`, `night_scene` | 12 storie; tre sono notturne (s01, s08, s10) |
+
+Gli id di `inhabitant` sono esattamente `fiamma, bartolo, stria, memolo, grunto, rovo, salvia,
+nodo, zolla, amo`: i dieci abitanti che non sono né fratelli né cuccioli, già in `lib/canone.ts`
+con lo stesso id. Il join non ha bisogno di una tabella di corrispondenza scritta a mano.
+
+### Dove si ferma: regola 7 e regola 10
+
+`story_graph.json` è un documento di lavorazione e contiene le risoluzioni, le paure, i finali.
+**Di quel file si pubblica il dove e il quando, mai il cosa succede.** Stagione, vento, notte,
+quartieri attraversati, luoghi toccati, chi c'è in scena: leciti. `premise`, `problem`,
+`resolution_mode`, `threshold_moment`, `seeds_*`, `key_phrase_*` e le `note` dei luoghi: no, sono
+il contenuto dei libri (regola 7). Chi scrive l'estrazione mette in **whitelist** i campi che
+escono, non in blacklist quelli che restano: una blacklist, al prossimo campo aggiunto al grafo,
+pubblica un finale.
+
+L'altra metà del vincolo: il pubblico di queste pagine è **il genitore, non il bambino**
+(regola 10). L'unica superficie che gioca è `/gioco`. Quindi niente punteggi, niente barre di
+completamento, niente "hai visto 7 luoghi su 18", niente sblocchi. Tutto è raggiungibile subito:
+esplorare dà **più mondo**, non l'accesso al mondo. Il gioco dell'isola non ha battaglie e la
+vetrina non ha quiz: lo spirito è lo stesso, cose piccole da trovare, nessuna prestazione
+richiesta.
+
+E la condizione che tiene in piedi tutto il resto: **l'esplorazione è additiva.** Chi arriva di
+sera, scorre e se ne va deve ricevere lo stesso il messaggio intero, cos'è la saga, com'è
+disegnata, dov'è il libro. Se qualcosa si capisce solo cliccando, non è un prodotto: è un
+indovinello.
+
 ## I lavori, in ordine di valore
 
 ### A. I due quartieri mancanti — è un difetto, non un miglioramento
@@ -56,6 +102,10 @@ Non generarla automaticamente e non allargarla con roba inventata.
 `/mondo` dichiara "L'isola è divisa in quattro quartieri — aria, acqua, fuoco, terra — più il
 centro" e poi mostra **tre schede**: villaggio, quartiere di Fuoco, quartiere d'Aria. Il testo
 promette quattro cose e la pagina ne dà tre.
+
+**Non è solo `/mondo`.** La stessa promessa è in home, `app/page.tsx:99`: "Il villaggio, i
+quattro quartieri, le Montagne Gemelle, il Fiume che Gira". Se sistemi solo `/mondo`, la
+contraddizione resta sulla pagina che vede più gente. Le superfici da tenere d'accordo sono due.
 
 Causa verificata: nel canone `visual/atlante/tavole/` **esistono solo** le tavole di villaggio,
 quartiere d'Aria e quartiere di Fuoco. Le tavole d'Acqua e di Terra non sono mai state disegnate,
@@ -162,6 +212,50 @@ Oggi vivono solo in `/giornate`. Sono il materiale migliore che il progetto ha. 
 - Il sito diventerà un **sottodominio** di un hub. Non serve `basePath`, ma controlla che niente
   presupponga di stare in radice assoluta.
 
+### G. Il tessuto connettivo — il modulo dati da cui dipendono B ed E
+
+È il lavoro che trasforma il principio qui sopra in codice, ed è piccolo: un modulo dati
+committato, generato da uno script che si lancia a mano con il canone checkato accanto.
+
+**Il sito non deve mai dipendere dal canone in build.** `isola_i3v_visual` è un repo separato e
+in sola lettura: `npm run check` deve continuare a funzionare su una macchina che non ce l'ha su
+disco. Lo script si lancia quando il canone cambia, l'output si committa e si rilegge a mano
+esattamente come si fa con `lib/canone.ts` (regola 2). Nessuna generazione dentro `next build`,
+nessun fetch, nessun submodule.
+
+```
+node scripts/estrai-legami.mjs --canone ../isola_i3v_visual   ->   lib/legami.ts   (committato)
+```
+
+Cosa contiene: per ogni luogo pubblicabile id, nome, quartiere, categoria, geometria proiettata e
+abitante quando c'è; per ogni storia i quartieri attraversati, i luoghi, il cast, la stagione, il
+vento e se è notturna. Whitelist dei campi, come sopra.
+
+Cosa apre, una volta che esiste:
+
+- **`/mappa` diventa la spina dorsale** invece di una pagina fra sette: da un luogo si arriva a
+  chi ci abita, alle storie che ci passano, all'illustrazione che lo mostra. È il lavoro B, che
+  senza questo modulo resta un SVG muto, solo più nitido del JPEG di oggi.
+- **`/mondo` guadagna il dove.** Dieci abitanti su diciotto hanno già una casa georiferita. Gli
+  altri otto — i tre fratelli e i cinque cuccioli — nel geojson non ce l'hanno: dichiaralo, non
+  inventargliela (regola 2 di questi guard rail).
+- **`/storie` smette di essere solo testo.** Ogni storia può mostrare dove passa e in che
+  stagione senza dire come va a finire: una storia d'inverno, di notte, sulle Montagne Gemelle è
+  già un'immagine e non spoilera niente. Le tre notturne hanno persino l'atmosfera già in
+  `public/media/isola/notturna.webp`.
+- **`/giornate` si ancora al mondo.** Le didascalie nominano già la Foresta Intrecciata, gli
+  Orti, la Spiaggia delle Conchiglie, il Pontile, la Roccia Alta: sono luoghi del geojson, e
+  collegarli costa quasi zero.
+
+E chiude il cerchio su A: i quartieri attraversati dalle dodici storie coprono tutti e quattro i
+quartieri, più il centro e il perimetro del Fiume. I quattro quartieri non sono un modo di dire
+nel testo di `/mondo`, sono la struttura su cui il canone indicizza le storie. Ragione in più
+perché la pagina non ne mostri tre.
+
+Vincolo suo proprio, oltre a tutti i guard rail: **ogni collegamento è un link vero**:
+navigabile, con un URL, raggiungibile senza JavaScript. Un pannello che si apre solo al clic non
+è informazione vissuta, è informazione nascosta.
+
 ---
 
 ## Guard rail — quello che fa fallire il lavoro
@@ -189,13 +283,17 @@ Oggi vivono solo in `/giornate`. Sono il materiale migliore che il progetto ha. 
 
 Il lavoro si divide bene per superficie, ma tre file sono **punti di contesa**: `lib/canone.ts`,
 `app/styles/base.css` e `components/shell.tsx`. Chi li tocca lo fa da solo.
+A questi si aggiunge `lib/legami.ts` appena esiste: lo scrive lo script di G, non le mani.
 
 Suggerimento di sequenza:
 
-1. **In parallelo, indipendenti:** A (quartieri) · C (rosone SVG) · F (sitemap, robots, JSON-LD).
+1. **In parallelo, indipendenti:** A (quartieri) · C (rosone SVG) · F (sitemap, robots, JSON-LD)
+   · G (il modulo dati). G è piccolo ma sta sul cammino critico: fallo partire subito, perché
+   B ed E aspettano il suo output.
 2. **Poi, sulla base stabilizzata:** B (mappa SVG) — è il lavoro grosso, dagli spazio e un
-   subagente dedicato che possa anche scrivere lo script di proiezione.
-3. **Poi:** E (immagini nelle altre superfici, lightbox).
+   subagente dedicato che possa anche scrivere lo script di proiezione. Legge `lib/legami.ts`.
+3. **Poi:** E (immagini nelle altre superfici, lightbox), che usa gli stessi legami per ancorare
+   le illustrazioni ai luoghi.
 4. **Per ultimo, quando il DOM è fermo:** D (movimento). Animare prima significa rifarlo.
 
 Ogni workstream atterra con i suoi test e con la suite intera verde. Un lavoro che passa i propri
