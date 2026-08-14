@@ -1,13 +1,34 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
-import { gruppi, luoghi, personaggi, personaggiPerGruppo } from "@/lib/canone";
+import type { Luogo } from "@/lib/canone";
+import { gruppi, luoghiPerTipo, personaggi, personaggiPerGruppo } from "@/lib/canone";
 
 export const metadata: Metadata = {
   title: "Chi ci vive",
   description:
     "I tre fratelli, gli animali del villaggio, chi tiene in piedi l'isola e i cinque cuccioli della scuola.",
 };
+
+function SchedaLuogo({ luogo, largo = false }: { luogo: Luogo; largo?: boolean }) {
+  return (
+    <article className={largo ? "luogo luogo--largo" : "luogo"}>
+      <div className="luogo-figura">
+        <Image
+          src={`/media/luoghi/${luogo.id}.webp`}
+          alt={luogo.nome}
+          width={900}
+          height={1350}
+          sizes={largo ? "(min-width: 46rem) 38vw, 92vw" : "(min-width: 68rem) 23vw, (min-width: 46rem) 46vw, 92vw"}
+        />
+      </div>
+      <div className="luogo-corpo">
+        <h3>{luogo.nome}</h3>
+        <p>{luogo.riga}</p>
+      </div>
+    </article>
+  );
+}
 
 export default function Mondo() {
   return (
@@ -60,30 +81,21 @@ export default function Mondo() {
         <div className="contenuto">
           <div className="testa-sezione">
             <span className="occhiello">Dove abitano</span>
-            <h2>Il villaggio e i quartieri.</h2>
+            <h2>Il centro e i quattro quartieri.</h2>
             <p>
-              L&rsquo;isola è divisa in quattro quartieri — aria, acqua, fuoco,
-              terra — più il centro, dove c&rsquo;è la piazza.
+              Dentro l&rsquo;anello del Fiume c&rsquo;è il villaggio, con la
+              piazza e il mercato. Intorno stanno i quattro quartieri: aria a
+              nord, fuoco a est, acqua a sud, terra a ovest.
             </p>
           </div>
 
-          <div className="luoghi">
-            {luoghi.map((luogo) => (
-              <article className="luogo" key={luogo.id}>
-                <div className="luogo-figura">
-                  <Image
-                    src={`/media/luoghi/${luogo.id}.webp`}
-                    alt={luogo.nome}
-                    width={900}
-                    height={1350}
-                    sizes="(min-width: 46rem) 31vw, 92vw"
-                  />
-                </div>
-                <div className="luogo-corpo">
-                  <h3>{luogo.nome}</h3>
-                  <p>{luogo.riga}</p>
-                </div>
-              </article>
+          {luoghiPerTipo("centro").map((luogo) => (
+            <SchedaLuogo key={luogo.id} luogo={luogo} largo />
+          ))}
+
+          <div className="quartieri">
+            {luoghiPerTipo("quartiere").map((luogo) => (
+              <SchedaLuogo key={luogo.id} luogo={luogo} />
             ))}
           </div>
 

@@ -364,25 +364,61 @@ export const personaggi: Personaggio[] = [
   },
 ];
 
-export type Luogo = { id: string; nome: string; riga: string };
+export type Luogo = {
+  id: string;
+  nome: string;
+  riga: string;
+  /** Il villaggio sta dentro l’anello del Fiume; gli altri quattro sono i quartieri. */
+  tipo: "centro" | "quartiere";
+};
 
+/*
+ * Il centro e i quattro quartieri, in ordine di bussola a partire da nord.
+ * Le direzioni sono quelle canoniche: nord in alto, est dove sorge il sole,
+ * sud dove la Bocca sbocca nel mare, ovest verso gli Orti.
+ *
+ * Attenzione alle immagini di Acqua e Terra: il canone non ha una tavola
+ * d’atlante per questi due quartieri, quindi `public/media/luoghi/` monta la
+ * panoramica canonica di un luogo che ci sta dentro — la Spiaggia delle
+ * Conchiglie per l’Acqua, gli Orti del Cerchio per la Terra. Sono segnaposto
+ * dichiarati, in attesa delle tavole in produzione: quando arrivano si
+ * sostituiscono i due file e questa nota si toglie.
+ */
 export const luoghi: Luogo[] = [
   {
     id: "villaggio",
     nome: "Il Villaggio",
     riga: "La piazza, l’Albero Vecchio, il mercato di mezzogiorno. Il centro di tutto.",
-  },
-  {
-    id: "quartiere-fuoco",
-    nome: "Il quartiere di Fuoco",
-    riga: "A est, la Via dell’Alba. Il camino del forno fuma prima che sia giorno.",
+    tipo: "centro",
   },
   {
     id: "quartiere-aria",
     nome: "Il quartiere d’Aria",
     riga: "A nord, verso i Pascoli Alti e le Montagne Gemelle.",
+    tipo: "quartiere",
+  },
+  {
+    id: "quartiere-fuoco",
+    nome: "Il quartiere di Fuoco",
+    riga: "A est, la Via dell’Alba. Il camino del forno fuma prima che sia giorno.",
+    tipo: "quartiere",
+  },
+  {
+    id: "quartiere-acqua",
+    nome: "Il quartiere d’Acqua",
+    riga: "A sud, dove il Fiume incontra il mare: il Pontile, la Bocca, la Spiaggia delle Conchiglie.",
+    tipo: "quartiere",
+  },
+  {
+    id: "quartiere-terra",
+    nome: "Il quartiere di Terra",
+    riga: "A ovest, gli Orti del Cerchio e poi la Foresta Intrecciata. I campi ripetono i cerchi del Fiume.",
+    tipo: "quartiere",
   },
 ];
+
+export const luoghiPerTipo = (tipo: Luogo["tipo"]) =>
+  luoghi.filter((l) => l.tipo === tipo);
 
 /**
  * Il Volume 1 esiste, è stampato ed è caricato su Amazon: manca solo la data di

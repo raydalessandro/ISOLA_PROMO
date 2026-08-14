@@ -76,14 +76,42 @@
 
 /* ---------- i luoghi ---------- */
 
-.luoghi {
+/* La sezione ripete la forma dell'isola: il villaggio dentro l'anello prende
+   una scheda larga per sé, i quattro quartieri stanno in fila intorno. */
+
+.quartieri {
   display: grid;
   gap: clamp(1rem, 2.6vw, 1.6rem);
+  margin-top: clamp(1rem, 2.6vw, 1.6rem);
 }
 
 @media (min-width: 46rem) {
-  .luoghi {
-    grid-template-columns: repeat(3, 1fr);
+  .quartieri {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 62rem) {
+  .quartieri {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 46rem) {
+  .luogo--largo {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+  }
+
+  /* La figura del centro si allarga: a ritratto la scheda diventava una
+     colonna alta con mezza riga di testo accanto. */
+  .luogo--largo .luogo-figura {
+    aspect-ratio: 4 / 3;
+  }
+
+  .luogo--largo .luogo-corpo {
+    align-self: center;
+    padding: clamp(1.3rem, 3vw, 2.2rem);
   }
 }
 
