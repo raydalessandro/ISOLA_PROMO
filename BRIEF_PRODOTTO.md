@@ -138,24 +138,53 @@ Aggiungi un test che leghi il numero di quartieri nominati nel testo al numero d
 
 ### B. La mappa vera — il pezzo con più valore inespresso
 
-`/mappa` oggi è **un JPEG**. C'è un GeoJSON canonico da 105 feature che nessuno sta usando.
+`/mappa` oggi è **un JPEG**, e i 105 luoghi del canone non li usa nessuno.
 
-Costruisci una mappa **SVG interattiva** generata da `island.geojson`:
+#### Leggi questo prima di aprire il geojson
 
-- proietta le geometrie in coordinate SVG a build time (script in `scripts/`, output un modulo
-  dati in `lib/`, non parsing del geojson nel browser);
-- i quattro quartieri come aree distinguibili, colorate con la palette esistente;
-- luoghi selezionabili con nome, categoria e — dove esiste — il rimando all'illustrazione;
-- il Fiume che Gira come tracciato leggibile: è un anello, e la direzione della corrente sta in
-  `flow_direction`.
+**Le coordinate di `island.geojson` sono simboliche.** Dicono in quale quartiere sta una cosa e
+da che parte, non dove sta davvero. L'isola misura 7,9 × 6,7 km, ma la bottega e la casa di Nodo
+distano **5,4 metri**, la scuola dalla casa di Stria 7,8: su un riquadro da mille unità è meno di
+un pixel, e infatti proiettando il villaggio si ottiene un grumo illeggibile.
 
-Vincoli:
+Quindi la mappa **non si genera dalle coordinate**. Quello che il geojson dà davvero è:
 
-- deve funzionare **senza JavaScript** almeno come immagine leggibile con i nomi;
-- navigabile da tastiera, ogni area interattiva è un elemento focalizzabile con nome accessibile;
-- niente Leaflet, niente librerie di mappe, niente tile server: è un'isola inventata, sta tutta
-  in un SVG;
-- il JPEG attuale resta come alternativa illustrata, non buttarlo.
+| Affidabile | Non affidabile |
+|---|---|
+| il perimetro dell'isola e le cinque aree (quattro quartieri più il centro) | la posizione dei singoli edifici |
+| a quale quartiere appartiene ogni luogo | le distanze fra due luoghi |
+| chi ci abita, quali storie ci passano, in che stagione | l'orientamento reciproco dentro un quartiere |
+
+**La disposizione dentro un quartiere si prende dall'illustrazione di reference**
+(`public/media/isola/mappa.webp`, la tavola aerea del canone) **e dalle storie**, che dicono cosa
+si attraversa per andare da dove a dove. Una mappa disegnata leggendo le coordinate come
+cartografia mostrerebbe un'isola che non è quella dei libri — e l'errore si scopre solo davanti
+al disegno finito.
+
+#### Cosa costruire
+
+I legami sono già estratti in `lib/legami.ts` (lavoro G): non ripartire dal geojson grezzo.
+Restano due strade oneste, e la scelta è tua:
+
+1. **Punti caldi sopra l'illustrazione.** La tavola aerea resta l'immagine, e sopra ci va uno
+   strato di aree interattive posizionate a mano leggendo il disegno. Il registro visivo è quello
+   dell'albo, che è il registro del progetto. In cambio ogni luogo va collocato a occhio, e se
+   l'illustrazione cambia le posizioni vanno riviste.
+2. **SVG disegnato.** Le cinque aree dei quartieri dal geojson (quelle si possono proiettare) e
+   dentro ciascuna i luoghi disposti a mano, non per coordinata. Scala, prende i colori dai token,
+   si anima. In cambio va disegnato, e va disegnato bene: un SVG piatto accanto a un acquerello
+   sfigura.
+
+In tutti e due i casi:
+
+- da un luogo si arriva a **chi ci abita**, alle **storie che ci passano** e all'illustrazione che
+  lo mostra — è questo che rende la mappa la spina dorsale invece di una pagina fra sette;
+- il Fiume che Gira è un anello con una sola apertura a sud, e il verso della corrente sta in
+  `corrente` (antiorario): se lo disegni, disegnalo giusto;
+- deve funzionare **senza JavaScript**, almeno come immagine leggibile con i nomi;
+- navigabile da tastiera, ogni area interattiva è focalizzabile e ha un nome accessibile;
+- niente Leaflet, niente librerie di mappe, niente tile server: è un'isola inventata;
+- il JPEG attuale non si butta.
 
 ### C. Il segno vettoriale
 
@@ -227,9 +256,13 @@ nessun fetch, nessun submodule.
 node scripts/estrai-legami.mjs --canone ../isola_i3v_visual   ->   lib/legami.ts   (committato)
 ```
 
-Cosa contiene: per ogni luogo pubblicabile id, nome, quartiere, categoria, geometria proiettata e
-abitante quando c'è; per ogni storia i quartieri attraversati, i luoghi, il cast, la stagione, il
-vento e se è notturna. Whitelist dei campi, come sopra.
+Cosa contiene: per ogni luogo pubblicabile id, nome, quartiere, categoria, abitante quando c'è e
+la geometria proiettata; per ogni storia i quartieri attraversati, i luoghi, il cast, la stagione,
+il vento e se è notturna. Whitelist dei campi, come sopra.
+
+Sulla geometria vale l'avvertenza di B: **è simbolica**. Le aree dei quartieri si possono
+disegnare, le posizioni dei singoli edifici no. Il modulo lo dichiara nella propria intestazione,
+così chi lo apre lo scopre prima di fidarsene e non dopo.
 
 Cosa apre, una volta che esiste:
 
