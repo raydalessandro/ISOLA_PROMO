@@ -34,6 +34,48 @@ test.describe("le superfici del sito", () => {
     expect(caricata).toBe(true);
   });
 
+  /*
+   * Il testo prometteva quattro quartieri e la pagina ne mostrava tre: e' il
+   * tipo di scollamento che nessuno rilegge, perche' copy e griglia vivono in
+   * due file diversi. Qui si legano: si contano gli elementi nominati nella
+   * riga di apertura e si pretende una scheda per ciascuno.
+   */
+  test("ogni quartiere nominato nel testo ha la sua scheda", async ({ page }) => {
+    await page.goto("/mondo");
+
+    const testa = page
+      .locator(".testa-sezione")
+      .filter({ hasText: "Il centro e i quattro quartieri" });
+    const intro = (await testa.locator("p").innerText()).toLowerCase();
+
+    const nominati = ["aria", "fuoco", "acqua", "terra"].filter((e) => intro.includes(e));
+    expect(nominati).toHaveLength(4);
+
+    const schede = page.locator(".quartieri .luogo");
+    await expect(schede).toHaveCount(nominati.length);
+
+    for (const elemento of nominati) {
+      await expect(
+        schede.locator("h3").filter({ hasText: new RegExp(elemento, "i") }),
+      ).toHaveCount(1);
+    }
+
+    // Il villaggio non e' un quartiere: sta al centro e ha una scheda sua.
+    await expect(page.locator(".luogo--largo")).toHaveCount(1);
+
+    // Le due illustrazioni nuove sono le ultime arrivate: si verifica che il
+    // browser le abbia davvero decodificate, non solo che il tag esista.
+    for (const id of ["quartiere-acqua", "quartiere-terra"]) {
+      const img = page.locator(`.quartieri img[src*="${id}"]`);
+      await img.scrollIntoViewIfNeeded();
+      // Le schede stanno in fondo alla pagina e le immagini sono pigre:
+      // l'asserzione deve riprovare finche' il browser non ha decodificato.
+      await expect
+        .poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0))
+        .toBe(true);
+    }
+  });
+
   test("le storie sono dodici, divise in quattro volumi, senza testo dei racconti", async ({
     page,
   }) => {
