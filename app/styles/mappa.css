@@ -78,3 +78,152 @@
   position: absolute;
   right: 0;
 }
+
+/* ---------- la mappa disegnata ---------- */
+
+/* La tavola dipinta sta sotto, i segni sopra: condividono il riquadro perche'
+   l'immagine e' 2:3 e il viewBox e' 1000x1500. Nessun aggiustamento, le
+   coordinate lette sul disegno cadono dove devono. */
+.mappa-interattiva {
+  margin: clamp(1.5rem, 4vw, 2.5rem) auto 0;
+  max-width: 40rem;
+  position: relative;
+}
+
+.mappa-interattiva img {
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.mappa-segni {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.mappa-segno {
+  cursor: pointer;
+}
+
+/* Il cerchio si ingrossa appena al passaggio e alla messa a fuoco: cambia lo
+   spessore del tratto, non il raggio, così non si muove niente intorno. */
+.mappa-segno circle {
+  transition: stroke-width 140ms ease-out;
+}
+
+.mappa-segno:hover circle,
+.mappa-segno:focus-visible circle {
+  stroke-width: 6;
+}
+
+.mappa-segno:focus {
+  outline: none;
+}
+
+.mappa-segno:focus-visible circle {
+  outline: 3px solid var(--inchiostro);
+  outline-offset: 3px;
+}
+
+/* Le etichette stanno sopra un disegno: senza alone il contrasto non regge.
+   `paint-order` fa disegnare prima il bordo chiaro e poi la lettera, così il
+   testo resta scuro su chiaro qualunque cosa ci sia sotto. */
+.mappa-etichetta {
+  fill: var(--inchiostro);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  paint-order: stroke fill;
+  stroke: var(--carta);
+  stroke-linejoin: round;
+  stroke-width: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mappa-segno circle {
+    transition: none;
+  }
+}
+
+/* ---------- le schede dei luoghi ---------- */
+
+.mappa-schede {
+  display: grid;
+  gap: clamp(0.8rem, 2vw, 1.2rem);
+  list-style: none;
+  margin-top: clamp(1.8rem, 4vw, 2.6rem);
+  padding: 0;
+}
+
+@media (min-width: 46rem) {
+  .mappa-schede {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.mappa-scheda {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  padding: 1rem 1.15rem 1.15rem;
+}
+
+/* Chi arriva qui cliccando un segno deve capire dov'è atterrato. */
+.mappa-scheda:target {
+  border-color: var(--bordo-forte);
+  box-shadow: var(--ombra);
+}
+
+.mappa-scheda h3 {
+  font-size: 1.1rem;
+}
+
+.mappa-scheda-dove {
+  color: var(--mulinello-testo);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  margin-top: 0.2rem;
+  text-transform: uppercase;
+}
+
+.mappa-scheda-abita {
+  margin-top: 0.6rem;
+}
+
+.mappa-scheda-storie {
+  margin-top: 0.6rem;
+}
+
+.mappa-scheda-storie > span {
+  color: var(--tenue);
+  font-family: var(--sans);
+  font-size: 0.82rem;
+}
+
+.mappa-scheda-storie ul {
+  list-style: none;
+  margin-top: 0.3rem;
+  padding: 0;
+}
+
+.mappa-scheda-storie li {
+  border-left: 2px solid var(--bordo-forte);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+  padding-left: 0.6rem;
+}
+
+.mappa-scheda-nota {
+  border-top: 1px solid var(--bordo);
+  color: var(--tenue);
+  font-size: 0.88rem;
+  margin-top: 0.8rem;
+  padding-top: 0.6rem;
+}

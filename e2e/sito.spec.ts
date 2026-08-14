@@ -85,6 +85,42 @@ test.describe("le superfici del sito", () => {
     }
   });
 
+  /*
+   * La mappa e' un indice: ogni segno sulla tavola porta alla scheda del suo
+   * luogo, e la scheda dice chi ci abita e quali storie ci passano. Deve
+   * funzionare **senza JavaScript**, quindi i segni sono ancore vere: qui si
+   * verifica che ognuna abbia il suo bersaglio, non solo che esista il segno.
+   */
+  test("ogni segno sulla mappa porta alla scheda del suo luogo", async ({ page }) => {
+    await page.goto("/mappa");
+
+    const segni = page.locator(".mappa-segno");
+    const quanti = await segni.count();
+    expect(quanti).toBeGreaterThanOrEqual(10);
+    await expect(page.locator(".mappa-scheda")).toHaveCount(quanti);
+
+    for (let i = 0; i < quanti; i++) {
+      const segno = segni.nth(i);
+      const href = await segno.getAttribute("href");
+      expect(href, "un segno senza destinazione").toMatch(/^#luogo-/);
+      await expect(page.locator(href as string)).toHaveCount(1);
+
+      // Il cerchio non dice niente a chi non vede: il nome sta sul collegamento.
+      const nome = await segno.getAttribute("aria-label");
+      expect(nome?.trim(), "un segno senza nome accessibile").toBeTruthy();
+    }
+  });
+
+  test("le schede della mappa legano i luoghi a chi ci abita e alle storie", async ({ page }) => {
+    await page.goto("/mappa");
+
+    // Il Forno e' il caso che tiene insieme tutto: ci abita Fiamma e ci passano
+    // piu' storie che in qualsiasi altro luogo dell'isola.
+    const forno = page.locator("#luogo-forno");
+    await expect(forno).toContainText("Fiamma");
+    await expect(forno.locator(".mappa-scheda-storie li").first()).toBeVisible();
+  });
+
   test("le storie sono dodici, divise in quattro volumi, senza testo dei racconti", async ({
     page,
   }) => {
