@@ -18,6 +18,15 @@ test.describe("le superfici del sito", () => {
     }
   });
 
+  test("la testata porta il segno dei tre venti e il nome del sito", async ({ page }) => {
+    await page.goto("/");
+
+    const marchio = page.locator(".marchio");
+    // Il segno e' decorativo: il nome accessibile lo porta il testo accanto.
+    await expect(marchio).toHaveAccessibleName(/Isola dei Tre Venti/);
+    await expect(marchio.locator("svg circle")).toHaveCount(3);
+  });
+
   test("il mondo mostra tutti gli abitanti, ciascuno con la sua illustrazione", async ({ page }) => {
     await page.goto("/mondo");
 

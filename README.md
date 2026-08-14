@@ -116,8 +116,15 @@ dei post.
 
 ## Marchio e palette
 
-Il segno del sito è il **rosone dei tre venti** — piuma, onda, foglie intorno a una spirale —
-preso dall'atlante del canone.
+Il segno della saga è il **rosone dei tre venti** — piuma, onda, foglie intorno a una spirale —
+preso dall'atlante del canone. È un acquerello, e vuole spazio: a 34 px nella testata diventava
+una macchia in cui non si distingueva niente. Il canone non ne ha una versione vettoriale, e
+ridisegnarlo avrebbe voluto dire inventare un marchio che non esiste.
+
+Nella testata il segno sono quindi **i tre punti dei venti**, in triangolo come stanno stampati
+intorno all'isola sulla quarta di copertina: blu in alto, verde a sinistra, arancio a destra.
+Prendono i colori dai token, reggono a qualsiasi dimensione e non inventano niente. Il rosone
+resta la sorgente delle icone PWA (`npm run icons`), dove la dimensione gli rende giustizia.
 
 I colori non sono inventati: i tre punti stampati sulla quarta di copertina del Volume 1,
 campionati dal file di stampa, sono i colori dei tre venti.

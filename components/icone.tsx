@@ -90,3 +90,31 @@ export function IconaMappa({ className }: Props) {
     </svg>
   );
 }
+
+/*
+ * Il marchio della testata: i tre punti dei venti, disposti in triangolo come
+ * stanno stampati intorno all'isola sulla quarta di copertina del Volume 1 —
+ * blu in alto, verde a sinistra, arancio a destra.
+ *
+ * Prende il posto del rosone dipinto, che a 34 px non si leggeva: piuma, onda
+ * e foglie diventavano una macchia. Il rosone resta il segno della saga, ma
+ * vuole spazio; questo regge a qualsiasi dimensione e prende i colori dai
+ * token, quindi segue la palette senza copiarla.
+ *
+ * Decorativo: il nome del sito accanto porta il significato.
+ */
+export function MarchioTrePunti({ className }: Props) {
+  return (
+    <svg
+      aria-hidden
+      className={className}
+      focusable={false}
+      viewBox="0 0 34 34"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="17" cy="6.5" r="5" fill="var(--taglio)" />
+      <circle cx="7.9" cy="22.25" r="5" fill="var(--intreccio)" />
+      <circle cx="26.1" cy="22.25" r="5" fill="var(--mulinello)" />
+    </svg>
+  );
+}

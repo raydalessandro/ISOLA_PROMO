@@ -42,9 +42,10 @@
   text-decoration: none;
 }
 
-.marchio img {
-  height: 34px;
-  width: 34px;
+.marchio-segno {
+  flex: none;
+  height: 30px;
+  width: 30px;
 }
 
 .marchio-testo {
