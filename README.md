@@ -65,9 +65,19 @@ Delle storie escono il dove e il quando — stagione, vento, notte, quartieri at
 in scena — e mai come vanno a finire. Il grafo è un documento di lavorazione pieno di finali: lo
 script elenca i campi ammessi uno per uno, così un campo nuovo non arriva sul sito da solo.
 
-Le coordinate sono proiettate in unità di viewBox SVG, pronte da disegnare. Il riquadro inquadra
-l'isola: le due "Isole all'Orizzonte" restano nel modulo ma cadono fuori dal riquadro, che è poi
-dove stanno davvero.
+Le coordinate sono proiettate in unità di viewBox SVG. Il riquadro inquadra l'isola: le due
+"Isole all'Orizzonte" restano nel modulo ma cadono fuori, che è poi dove stanno davvero.
+
+**Le posizioni però sono simboliche, e questo va saputo prima di disegnarci sopra.** Le coordinate
+dicono in quale quartiere sta una cosa, e da che parte; non dove sta davvero. L'isola misura
+7,9 × 6,7 km, ma la bottega e la casa di Nodo distano 5,4 metri e la scuola dalla casa di Stria
+7,8: su un riquadro da mille unità è meno di un pixel, ed è il motivo per cui gli edifici del
+villaggio si accavallano in un grumo.
+
+Quindi le **aree dei quartieri** sono affidabili, e con esse l'appartenenza di ogni luogo. La
+disposizione dentro un quartiere no: quella si prende dall'illustrazione di reference
+(`public/media/isola/mappa.webp`) e dalle storie. Una mappa disegnata leggendo queste coordinate
+come cartografia mostrerebbe un'isola che non è quella dei libri.
 
 ### Immagini
 

@@ -11,6 +11,13 @@
  * Delle storie escono il dove e il quando, mai come vanno a finire: i racconti
  * stanno nei libri (AGENTS.md, regola 7).
  *
+ * LE POSIZIONI SONO SIMBOLICHE. Le coordinate dicono in quale quartiere sta una
+ * cosa, non dove sta davvero: l'isola misura 7,9×6,7 km ma la bottega e la casa
+ * di Nodo distano 5,4 metri. Le **aree dei quartieri** sono affidabili; la
+ * disposizione dentro un quartiere si prende dall'illustrazione di reference e
+ * dalle storie. Chi disegna una mappa leggendo `punti` come cartografia
+ * ottiene un'isola che non è quella dei libri.
+ *
  * Sorgenti: island.geojson v0.6.1 (2026-04-28) e story_graph.json.
  */
 
@@ -35,7 +42,11 @@ export type LuogoMappa = {
   /** Verso della corrente, per i tratti d'acqua. */
   corrente: string | null;
   forma: string;
-  /** Coordinate proiettate, annidate come nel GeoJSON di partenza. */
+  /**
+   * Coordinate proiettate, annidate come nel GeoJSON di partenza.
+   * **Simboliche**: dicono il quartiere e il lato, non la posizione reale.
+   * Affidabili per le aree (`tipo === "quarter"`), non per i singoli edifici.
+   */
   punti: number[] | number[][] | number[][][];
 };
 

@@ -83,6 +83,20 @@ async function leggiJson(percorso) {
  * L'uscita è in unità di viewBox, origine in alto a sinistra come nell'SVG:
  * x cresce verso est, y cresce verso sud.
  *
+ * ATTENZIONE — LE POSIZIONI SONO SIMBOLICHE
+ *
+ * Le coordinate del geojson dicono **in quale quartiere** sta una cosa, e da
+ * che parte, non dove sta davvero. Non sono un rilievo: l'isola misura 7,9×6,7
+ * km, ma la bottega e la casa di Nodo distano 5,4 metri e la scuola dalla casa
+ * di Stria 7,8. Su un riquadro da 1000 unità è meno di un pixel, ed è il motivo
+ * per cui gli edifici del villaggio si accavallano in un grumo.
+ *
+ * Quindi: la proiezione serve a collocare le cose **per quartiere**, e le aree
+ * dei quartieri sono affidabili. La disposizione dentro un quartiere va presa
+ * dall'illustrazione di reference e dalle storie, non da questi numeri. Una
+ * mappa disegnata leggendo queste coordinate come cartografia mostrerebbe
+ * un'isola che non è quella dei libri.
+ *
  * Il riquadro si misura sull'isola e non su tutto il canone: le due "Isole
  * all'Orizzonte" (status `stub`) stanno al largo, e inquadrarle dentro
  * rimpicciolirebbe l'isola vera per far posto a due triangolini. Restano nel
@@ -230,6 +244,13 @@ function componiModulo({ luoghi, storie, vista, versione, data }) {
  * Delle storie escono il dove e il quando, mai come vanno a finire: i racconti
  * stanno nei libri (AGENTS.md, regola 7).
  *
+ * LE POSIZIONI SONO SIMBOLICHE. Le coordinate dicono in quale quartiere sta una
+ * cosa, non dove sta davvero: l'isola misura 7,9×6,7 km ma la bottega e la casa
+ * di Nodo distano 5,4 metri. Le **aree dei quartieri** sono affidabili; la
+ * disposizione dentro un quartiere si prende dall'illustrazione di reference e
+ * dalle storie. Chi disegna una mappa leggendo \`punti\` come cartografia
+ * ottiene un'isola che non è quella dei libri.
+ *
  * Sorgenti: island.geojson v${versione} (${data}) e story_graph.json.
  */
 
@@ -254,7 +275,11 @@ export type LuogoMappa = {
   /** Verso della corrente, per i tratti d'acqua. */
   corrente: string | null;
   forma: string;
-  /** Coordinate proiettate, annidate come nel GeoJSON di partenza. */
+  /**
+   * Coordinate proiettate, annidate come nel GeoJSON di partenza.
+   * **Simboliche**: dicono il quartiere e il lato, non la posizione reale.
+   * Affidabili per le aree (\`tipo === "quarter"\`), non per i singoli edifici.
+   */
   punti: number[] | number[][] | number[][][];
 };
 
