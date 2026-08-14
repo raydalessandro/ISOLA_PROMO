@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 
+import { GalleriaGiornate } from "@/components/galleria-giornate";
 import { giornate, totaleGiornate } from "@/lib/canone";
 
 export const metadata: Metadata = {
@@ -31,20 +31,7 @@ export default function Giornate() {
               <p>{set.intro}</p>
             </div>
 
-            <div className="galleria">
-              {set.immagini.map((immagine) => (
-                <figure className="giornata" key={immagine.file}>
-                  <Image
-                    src={`/media/giornate/${immagine.file}.webp`}
-                    alt={immagine.didascalia}
-                    width={immagine.larghezza}
-                    height={immagine.altezza}
-                    sizes="(min-width: 70rem) 27vw, (min-width: 40rem) 44vw, 92vw"
-                  />
-                  <figcaption>{immagine.didascalia}</figcaption>
-                </figure>
-              ))}
-            </div>
+            <GalleriaGiornate immagini={set.immagini} />
           </section>
         ))}
 
