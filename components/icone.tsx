@@ -71,6 +71,17 @@ export function IconaGioco({ className }: Props) {
   );
 }
 
+export function IconaGiornate({ className }: Props) {
+  return (
+    <svg {...comuni} className={className}>
+      <rect height="12.4" rx="2.2" width="15.6" x="6" y="3.4" />
+      <path d="M6 12.2 9.6 9l3.4 3 2.6-2.2 5.4 4.4" />
+      <circle cx="10.4" cy="7.4" r="1.2" />
+      <path d="M17.4 18.8H5.5a2.1 2.1 0 0 1-2.1-2.1V6.6" />
+    </svg>
+  );
+}
+
 export function IconaMappa({ className }: Props) {
   return (
     <svg {...comuni} className={className}>

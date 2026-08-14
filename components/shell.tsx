@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { canali, sito } from "@/lib/canone";
 import { useServiceWorker } from "@/lib/use-service-worker";
 import {
+  IconaGiornate,
   IconaGioco,
   IconaIsola,
   IconaLibro,
@@ -18,13 +19,14 @@ import {
 const voci = [
   { href: "/", etichetta: "Isola", esteso: "L'isola", Icona: IconaIsola },
   { href: "/mondo", etichetta: "Mondo", esteso: "Chi ci vive", Icona: IconaMondo },
+  { href: "/giornate", etichetta: "Giornate", esteso: "Le giornate", Icona: IconaGiornate },
   { href: "/storie", etichetta: "Storie", esteso: "Le dodici storie", Icona: IconaStorie },
   { href: "/mappa", etichetta: "Mappa", esteso: "La mappa", Icona: IconaMappa },
   { href: "/libro", etichetta: "Libro", esteso: "Il libro", Icona: IconaLibro },
   { href: "/gioco", etichetta: "Gioco", esteso: "Il gioco", Icona: IconaGioco },
 ];
 
-/* La barra bassa non regge sei voci su un telefono: la mappa resta nella
+/* La barra bassa non regge sette voci su un telefono: la mappa resta nella
    navigazione ampia e nei rimandi dentro le pagine. */
 const vociBarra = voci.filter((v) => v.href !== "/mappa");
 

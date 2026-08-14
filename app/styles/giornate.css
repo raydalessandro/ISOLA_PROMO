@@ -1,0 +1,85 @@
+/*
+ * Le giornate dell'isola: quaranta illustrazioni in cinque proporzioni diverse
+ * (3:4, 1:1, 9:16, 4:5, 16:9). Nessuna griglia rigida può reggerle senza
+ * ritagliarle, e ritagliare un'illustrazione composta con la fascia alta libera
+ * significa buttare via proprio la parte che l'autrice ha lasciato quieta.
+ * Quindi colonne: ogni immagine tiene le sue proporzioni, la colonna si adatta.
+ */
+
+.contenuto--largo {
+  max-width: 84rem;
+}
+
+.set + .set {
+  margin-top: clamp(3rem, 7vw, 4.5rem);
+}
+
+.set-testa {
+  border-bottom: 1px solid var(--bordo);
+  margin-bottom: clamp(1.4rem, 3vw, 2rem);
+  max-width: var(--misura);
+  padding-bottom: 0.9rem;
+}
+
+.set-testa p {
+  color: var(--morbido);
+  margin-top: 0.5rem;
+}
+
+.galleria {
+  columns: 1;
+  column-gap: clamp(0.9rem, 2.2vw, 1.5rem);
+}
+
+@media (min-width: 40rem) {
+  .galleria {
+    columns: 2;
+  }
+}
+
+@media (min-width: 70rem) {
+  .galleria {
+    columns: 3;
+  }
+}
+
+.giornata {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  break-inside: avoid;
+  margin-bottom: clamp(0.9rem, 2.2vw, 1.5rem);
+  overflow: hidden;
+  /* Una scheda spezzata a metà fra due colonne rovinerebbe l'illustrazione. */
+  page-break-inside: avoid;
+}
+
+.giornata img {
+  width: 100%;
+}
+
+.giornata figcaption {
+  color: var(--morbido);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  padding: 0.85rem 1rem 1rem;
+}
+
+.nota-giornate {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-left: 4px solid var(--intreccio);
+  border-radius: var(--raggio);
+  margin-top: clamp(2.5rem, 6vw, 3.5rem);
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+}
+
+.nota-giornate h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.nota-giornate p {
+  color: var(--morbido);
+  max-width: var(--misura);
+}

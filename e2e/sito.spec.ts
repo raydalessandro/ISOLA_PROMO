@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const SUPERFICI = ["/", "/mondo", "/storie", "/mappa", "/libro"];
+const SUPERFICI = ["/", "/mondo", "/giornate", "/storie", "/mappa", "/libro"];
 
 test.describe("le superfici del sito", () => {
   test("l'apertura racconta l'isola e i tre venti", async ({ page }) => {
@@ -42,6 +42,29 @@ test.describe("le superfici del sito", () => {
     await expect(page.locator(".storia")).toHaveCount(12);
     await expect(page.locator(".volume")).toHaveCount(4);
     await expect(page.getByRole("heading", { name: "Il vento che taglia" })).toBeVisible();
+  });
+});
+
+test.describe("le giornate dell'isola", () => {
+  test("la galleria mostra tutte e quaranta le illustrazioni, ognuna con la sua didascalia", async ({
+    page,
+  }) => {
+    await page.goto("/giornate");
+
+    const schede = page.locator(".giornata");
+    await expect(schede).toHaveCount(40);
+
+    // Una didascalia vuota lascerebbe un'immagine muta anche a chi non la vede.
+    const senzaDidascalia = await schede.evaluateAll((figure) =>
+      figure.filter((f) => !f.querySelector("figcaption")?.textContent?.trim()).length,
+    );
+    expect(senzaDidascalia).toBe(0);
+
+    // Il testo alternativo ripete la didascalia: nessuna immagine resta senza.
+    const senzaAlt = await schede.evaluateAll((figure) =>
+      figure.filter((f) => !f.querySelector("img")?.getAttribute("alt")?.trim()).length,
+    );
+    expect(senzaAlt).toBe(0);
   });
 });
 

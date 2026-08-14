@@ -13,6 +13,7 @@ Cinque superfici più il gioco:
 - `/mondo` — i diciotto abitanti e i quartieri;
 - `/storie` — le dodici storie, per volume;
 - `/mappa` — l'isola vista dall'alto;
+- `/giornate` — le 40 illustrazioni social, la casa dei post che verranno;
 - `/libro` — il Volume 1, dentro e fuori;
 - `/gioco` — l'avventura sull'isola.
 
@@ -51,8 +52,28 @@ dove si va, non come va a finire.
 | `isola/` | arte di copertina, mappa aerea, panoramica, notturna | `visual/atlante/` |
 | `emblema/` | il rosone dei tre venti, marchio del sito | `visual/atlante/emblema/` |
 | `libro/` | i tre render del Volume 1 stampato | originali di Ray |
+| `giornate/` | le 40 illustrazioni social, in due set da 20 | branch `immaginixsito` |
 
 Le icone PWA si generano dal rosone: `npm run icons`.
+
+## Le giornate dell'isola
+
+`/giornate` raccoglie 40 illustrazioni che non stanno in nessun libro: momenti laterali della
+vita sull'isola, disegnati sulle stesse reference canoniche dei volumi. Il primo set segue i tre
+fratelli fra gli abitanti; il secondo è fatto di ritratti ambientati, un personaggio per volta.
+
+Le didascalie non sono inventate: vengono dai brief che hanno generato le immagini
+(`20_BRIEF_PRONTI.md` e `20_BRIEF_FOCUS_V2.md`), quindi dicono quello che l'immagine mostra
+davvero. Servono anche da testo alternativo, e un test verifica che nessuna delle 40 ne sia priva.
+
+Le sorgenti stanno nella branch [`immaginixsito`](https://github.com/raydalessandro/isola_i3v_visual/tree/immaginixsito)
+di `isola_i3v_visual`, sotto `assets/social_isola_01_20` e `assets/social_isola_v2_01_20`.
+Sono PNG da 6-8 MB e restano là: nel sito entrano solo come WebP a due larghezze.
+
+Le cinque proporzioni del set (3:4, 1:1, 9:16, 4:5, 16:9) sono la ragione per cui la galleria usa
+colonne CSS e non una griglia: ogni illustrazione tiene le sue proporzioni. Ritagliarle
+significherebbe buttare via proprio la fascia alta che l'autrice ha lasciato quieta per il testo
+dei post.
 
 ## Marchio e palette
 

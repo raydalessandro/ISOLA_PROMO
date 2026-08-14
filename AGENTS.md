@@ -7,18 +7,19 @@
 5. Niente controlli finti: se un elemento sembra cliccabile, deve fare qualcosa o dichiararsi in attesa.
 6. Uno stato esplicito è sempre meglio di un contenuto inventato per riempire la pagina.
 7. **Del testo delle storie si pubblicano solo titolo e una riga.** I racconti stanno nei libri. Le righe descrivono l'apertura o il luogo, mai il finale.
-8. La firma pubblica è **Beatrice Mercuri / Spirale Editrice**. Ray, il grafo, la pipeline e i repo di lavorazione non compaiono da nessuna parte sul sito.
-9. Il pubblico che legge queste pagine è il genitore, non il bambino. L'unica superficie rivolta ai bambini è `/gioco`.
-10. La palette non si allarga a piacere: i tre colori dei venti sono i tre punti stampati sulla quarta di copertina del Volume 1, la carta è il suo fondo. Chi aggiunge un colore dice da dove viene.
-11. Il testo sta a 4.5:1 di contrasto. `--tenue` è il grigio più scuro ammesso sulla carta, e l'arancio dei punti come testo va usato nella variante `--mulinello-testo`: il pieno non ce la fa.
-12. Gli stili vivono in `app/styles/`, uno per superficie. `globals.css` si limita agli import. Il gioco usa CSS Modules e non tocca il resto.
-13. `lib/gioco/motore.js` è il prototipo di Ray portato quasi alla lettera: resta JavaScript, resta fuori da ESLint, e si modifica solo per farlo funzionare — non per riscriverlo in stile. Il contratto verso l'app è `motore.d.ts`.
-14. Toccando `public/sw.js` va alzata `VERSION`, altrimenti i client restano su cache vecchie.
-15. Le immagini nuove entrano in `public/media/` già in WebP e a due larghezze (`nome.webp`, `nome@2x.webp`). Le sorgenti stanno nel canone o negli originali di Ray, non nel repo.
-16. Un binario copiato va verificato prima del commit: `npm run check:media` confronta quello che l'header dichiara con quello che il file contiene. Un'immagine troncata passa build, lint e test senza rumore.
-17. Ogni superficie resta mobile-first e deve funzionare come deploy Vercel.
-18. Prima di consegnare: `npm run check` e `npm run test:e2e` devono passare puliti. Zero violazioni axe su WCAG 2.1 AA.
-19. Si lavora su branch con pull request. La CI (typecheck, lint, integrità dei binari, build, Playwright) dev'essere verde prima del merge.
+8. Le didascalie di `/giornate` vengono dai brief che hanno generato le immagini, e fanno anche da testo alternativo: descrivono quello che si vede, non quello che si vorrebbe far sentire. Nessuna immagine senza didascalia.
+9. La firma pubblica è **Beatrice Mercuri / Spirale Editrice**. Ray, il grafo, la pipeline e i repo di lavorazione non compaiono da nessuna parte sul sito.
+10. Il pubblico che legge queste pagine è il genitore, non il bambino. L'unica superficie rivolta ai bambini è `/gioco`.
+11. La palette non si allarga a piacere: i tre colori dei venti sono i tre punti stampati sulla quarta di copertina del Volume 1, la carta è il suo fondo. Chi aggiunge un colore dice da dove viene.
+12. Il testo sta a 4.5:1 di contrasto. `--tenue` è il grigio più scuro ammesso sulla carta, e l'arancio dei punti come testo va usato nella variante `--mulinello-testo`: il pieno non ce la fa.
+13. Gli stili vivono in `app/styles/`, uno per superficie. `globals.css` si limita agli import. Il gioco usa CSS Modules e non tocca il resto.
+14. `lib/gioco/motore.js` è il prototipo di Ray portato quasi alla lettera: resta JavaScript, resta fuori da ESLint, e si modifica solo per farlo funzionare — non per riscriverlo in stile. Il contratto verso l'app è `motore.d.ts`.
+15. Toccando `public/sw.js` va alzata `VERSION`, altrimenti i client restano su cache vecchie.
+16. Le immagini nuove entrano in `public/media/` già in WebP e a due larghezze (`nome.webp`, `nome@2x.webp`). Le sorgenti stanno nel canone o negli originali di Ray, non nel repo.
+17. Un binario copiato va verificato prima del commit: `npm run check:media` confronta quello che l'header dichiara con quello che il file contiene. Un'immagine troncata passa build, lint e test senza rumore.
+18. Ogni superficie resta mobile-first e deve funzionare come deploy Vercel.
+19. Prima di consegnare: `npm run check` e `npm run test:e2e` devono passare puliti. Zero violazioni axe su WCAG 2.1 AA.
+20. Si lavora su branch con pull request. La CI (typecheck, lint, integrità dei binari, build, Playwright) dev'essere verde prima del merge.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

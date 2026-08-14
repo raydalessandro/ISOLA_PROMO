@@ -428,3 +428,93 @@ export const getStoria = (sid: string) => {
   if (!s) throw new Error(`storia sconosciuta: ${sid}`);
   return s;
 };
+
+/* ------------------------------------------------------------------------ */
+
+export type Giornata = {
+  /** Nome del file in public/media/giornate, senza estensione. */
+  file: string;
+  didascalia: string;
+  /** Proporzioni della sorgente: servono a Next per non far saltare il layout. */
+  larghezza: number;
+  altezza: number;
+};
+
+export type SetGiornate = {
+  id: string;
+  titolo: string;
+  intro: string;
+  immagini: Giornata[];
+};
+
+/*
+ * Le quaranta illustrazioni social, in due set.
+ *
+ * Non sono nei libri: sono momenti laterali, disegnati apposta per raccontare
+ * l'isola fuori dalla pagina. Le didascalie vengono dai brief che le hanno
+ * generate (20_BRIEF_PRONTI.md e 20_BRIEF_FOCUS_V2.md), quindi dicono quello
+ * che l'immagine mostra davvero.
+ *
+ * Sorgenti: branch `immaginixsito` di isola_i3v_visual, cartelle
+ * assets/social_isola_01_20 e assets/social_isola_v2_01_20.
+ */
+export const giornate: SetGiornate[] = [
+  {
+    id: "insieme",
+    titolo: "I tre fratelli e l’isola",
+    intro:
+      "Venti momenti in cui i fratelli incontrano chi ci vive: un ponte da provare, un nodo da fare, una fila di semi storta.",
+    immagini: [
+      { file: "s1-01-ponte-rami-post", didascalia: "I tre provano un ponte di rami, sul ruscello della Foresta Intrecciata.", larghezza: 1632, altezza: 2176 },
+      { file: "s1-02-braccialetto-carousel", didascalia: "Noah lascia nella mano di Gabriel un braccialetto di canapa, rametti e una castagna.", larghezza: 1920, altezza: 1920 },
+      { file: "s1-03-lanterna-story", didascalia: "Elias vela la lanterna; Gabriel trova la mano di Noah nel buio.", larghezza: 1440, altezza: 2560 },
+      { file: "s1-04-zattera-cover", didascalia: "Una zattera di tre rametti passa fra le pietre piatte del guado.", larghezza: 2560, altezza: 1440 },
+      { file: "s1-05-radice-reel-cover", didascalia: "Elias batte un ritmo su una radice; oltre le felci, Noah lo restituisce.", larghezza: 1664, altezza: 2080 },
+      { file: "s1-06-fiamma-forno-post", didascalia: "Mani di farina, nel laboratorio del forno di Fiamma.", larghezza: 1632, altezza: 2176 },
+      { file: "s1-07-stria-scuola-carousel", didascalia: "Tre ciottoli, un rametto e l’attenzione calma di Stria.", larghezza: 1920, altezza: 1920 },
+      { file: "s1-08-bartolo-pontile-story", didascalia: "Il nodo del pontile. Bartolo aspetta e non risolve al posto loro.", larghezza: 1440, altezza: 2560 },
+      { file: "s1-09-memolo-pun-reel-cover", didascalia: "Nel cortile di Mèmolo, Pun ha notato una cosa piccolissima sotto una foglia.", larghezza: 1664, altezza: 2080 },
+      { file: "s1-10-grunto-roccia-cover", didascalia: "Sul margine della Roccia Alta si sceglie la linea sicura. Grunto sta a distanza.", larghezza: 2560, altezza: 1440 },
+      { file: "s1-11-rovo-bru-post", didascalia: "Le impronte di Rovo e Bru nel terreno umido, al margine della Foresta.", larghezza: 1632, altezza: 2176 },
+      { file: "s1-12-nodo-carousel", didascalia: "Nella bottega di Nodo il nodo si trova con le mani, non si spiega.", larghezza: 1920, altezza: 1920 },
+      { file: "s1-13-salvia-story", didascalia: "Salvia raccoglie una foglia che scende, sul sentiero verso gli Orti.", larghezza: 1440, altezza: 2560 },
+      { file: "s1-14-zolla-cover", didascalia: "Una fila di semi storta, negli Orti del Cerchio. Zolla la fa diventare lavoro.", larghezza: 2560, altezza: 1440 },
+      { file: "s1-15-amo-reel-cover", didascalia: "Una conchiglia all’orecchio, sulla Spiaggia delle Conchiglie. Amo aspetta.", larghezza: 1664, altezza: 2080 },
+      { file: "s1-16-cardo-post", didascalia: "Un frutto rotola nella piazza, al margine dell’Albero Vecchio.", larghezza: 1632, altezza: 2176 },
+      { file: "s1-17-liu-carousel", didascalia: "Liù ascolta sotto una foglia larga, al bordo del torrente.", larghezza: 1920, altezza: 1920 },
+      { file: "s1-18-toba-story", didascalia: "Toba guarda una corrente complicata; Bartolo resta fermo accanto alla barca.", larghezza: 1440, altezza: 2560 },
+      { file: "s1-19-mercato-cover", didascalia: "Il mercato del mezzogiorno, dal lato tranquillo della piazza.", larghezza: 2560, altezza: 1440 },
+      { file: "s1-20-trio-piazza-reel-cover", didascalia: "Tre direzioni, una panca di pietra. Nessuno guarda la stessa cosa.", larghezza: 1664, altezza: 2080 },
+    ],
+  },
+  {
+    id: "uno-alla-volta",
+    titolo: "Uno alla volta",
+    intro:
+      "Venti ritratti ambientati: un abitante per volta, un gesto minimo, il posto dove passa le sue giornate.",
+    immagini: [
+      { file: "v2-01-gabriel-pietra-post", didascalia: "Gabriel posa un sasso piatto accanto a una fessura della Via che Sale.", larghezza: 1632, altezza: 2176 },
+      { file: "v2-02-gabriel-stria-carousel", didascalia: "Una foglia bagnata sulla soglia della scuola, dopo la pioggia.", larghezza: 1920, altezza: 1920 },
+      { file: "v2-03-gabriel-grunto-story", didascalia: "Gabriel e Grunto, sullo stesso sentiero alto, ascoltano lo stesso vento.", larghezza: 1440, altezza: 2560 },
+      { file: "v2-04-elias-telaio-reel", didascalia: "Elias intreccia canne in un piccolo telaio, al margine degli Orti.", larghezza: 1664, altezza: 2080 },
+      { file: "v2-05-elias-nodo-post", didascalia: "Una legatura da rifare, fuori dalla bottega di Nodo.", larghezza: 1632, altezza: 2176 },
+      { file: "v2-06-elias-bru-cover", didascalia: "Due rametti biforcuti a confronto, e Bru che guarda il più piccolo.", larghezza: 2560, altezza: 1440 },
+      { file: "v2-07-noah-erba-post", didascalia: "Noah segue una formica lungo una fessura nella pietra.", larghezza: 1632, altezza: 2176 },
+      { file: "v2-08-noah-fiamma-carousel", didascalia: "Tre briciole su un palmo, nel cortile dietro il forno.", larghezza: 1920, altezza: 1920 },
+      { file: "v2-09-noah-toba-story", didascalia: "Noah e Toba guardano la linea dove l’acqua scurisce la sabbia.", larghezza: 1440, altezza: 2560 },
+      { file: "v2-10-fiamma-ritratto-reel", didascalia: "Fiamma solleva il telo dalle ciotole dell’impasto, prima che cominci il giorno.", larghezza: 1664, altezza: 2080 },
+      { file: "v2-11-bartolo-mattino-cover", didascalia: "Bartolo controlla una cima al pontile, all’alba. La barca è vuota.", larghezza: 2560, altezza: 1440 },
+      { file: "v2-12-grunto-sentiero-post", didascalia: "Grunto passa fra l’erba alta, con calma, in un’aria mite.", larghezza: 1632, altezza: 2176 },
+      { file: "v2-13-memolo-pun-carousel", didascalia: "La sciarpa storta di Mèmolo si è impigliata; Pun tiene il filo.", larghezza: 1920, altezza: 1920 },
+      { file: "v2-14-rovo-bru-story", didascalia: "Rovo e Bru sullo stesso sentiero ombroso, nella stessa direzione.", larghezza: 1440, altezza: 2560 },
+      { file: "v2-15-stria-quaderno-reel", didascalia: "Stria aspetta sola sotto la tettoia della scuola.", larghezza: 1664, altezza: 2080 },
+      { file: "v2-16-salvia-cesto-post", didascalia: "Salvia divide le foglie in un cesto basso, al margine degli Orti.", larghezza: 1632, altezza: 2176 },
+      { file: "v2-17-zolla-orti-cover", didascalia: "Zolla pareggia con due pietre il bordo di un’aiuola, all’alba.", larghezza: 2560, altezza: 1440 },
+      { file: "v2-18-amo-riva-carousel", didascalia: "Amo aspetta la risalita dell’acqua, alla Bocca. La cassetta è vuota.", larghezza: 1920, altezza: 1920 },
+      { file: "v2-19-cuccioli-muretti-story", didascalia: "Cardo, Liù, Pun e Toba su un muretto basso: quattro ritmi diversi.", larghezza: 1440, altezza: 2560 },
+      { file: "v2-20-isola-abitata-cover", didascalia: "La piazza del villaggio, un mattino qualunque, senza i tre fratelli.", larghezza: 2560, altezza: 1440 },
+    ],
+  },
+];
+
+export const totaleGiornate = giornate.reduce((n, s) => n + s.immagini.length, 0);

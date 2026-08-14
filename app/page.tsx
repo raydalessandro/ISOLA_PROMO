@@ -1,7 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { libro, promessa, sito, storie, storiePerCiclo, venti } from "@/lib/canone";
+import {
+  libro,
+  promessa,
+  sito,
+  storie,
+  storiePerCiclo,
+  totaleGiornate,
+  venti,
+} from "@/lib/canone";
 
 export default function Apertura() {
   const primoVolume = storiePerCiclo("A");
@@ -96,10 +104,10 @@ export default function Apertura() {
             <Link className="rimando" href="/mondo">
               <div className="rimando-figura">
                 <Image
-                  src="/media/luoghi/villaggio.webp"
+                  src="/media/giornate/v2-20-isola-abitata-cover.webp"
                   alt=""
-                  width={900}
-                  height={1350}
+                  width={860}
+                  height={484}
                   sizes="(min-width: 46rem) 46vw, 92vw"
                 />
               </div>
@@ -132,6 +140,64 @@ export default function Apertura() {
                   dall&rsquo;anello ci sono il mare, la Bocca e le montagne.
                 </p>
                 <span className="freccia">Guarda la mappa →</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="venti sezione">
+        <div className="contenuto">
+          <div className="testa-sezione">
+            <span className="occhiello">Le giornate</span>
+            <h2>Quello che succede fra una storia e l’altra.</h2>
+            <p>
+              {totaleGiornate} illustrazioni che non stanno in nessun libro:
+              giornate normali dell’isola, un gesto per volta.
+            </p>
+          </div>
+
+          <div className="rimandi">
+            <Link className="rimando" href="/giornate">
+              <div className="rimando-figura">
+                <Image
+                  src="/media/giornate/s1-19-mercato-cover.webp"
+                  alt=""
+                  width={860}
+                  height={484}
+                  sizes="(min-width: 46rem) 46vw, 92vw"
+                />
+              </div>
+              <div className="rimando-corpo">
+                <span className="occhiello">{totaleGiornate} illustrazioni</span>
+                <h3>Le giornate dell’isola</h3>
+                <p>
+                  Un ponte da provare, una legatura da rifare, una fila di semi
+                  storta. Sono le immagini che accompagneranno l’isola sui
+                  social.
+                </p>
+                <span className="freccia">Guardale →</span>
+              </div>
+            </Link>
+
+            <Link className="rimando" href="/giornate">
+              <div className="rimando-figura">
+                <Image
+                  src="/media/giornate/v2-11-bartolo-mattino-cover.webp"
+                  alt=""
+                  width={860}
+                  height={484}
+                  sizes="(min-width: 46rem) 46vw, 92vw"
+                />
+              </div>
+              <div className="rimando-corpo">
+                <span className="occhiello">Uno alla volta</span>
+                <h3>Venti ritratti, venti mestieri</h3>
+                <p>
+                  Fiamma prima che cominci il giorno, Bartolo che controlla una
+                  cima all’alba, Zolla che pareggia un’aiuola.
+                </p>
+                <span className="freccia">Conosci l’isola →</span>
               </div>
             </Link>
           </div>

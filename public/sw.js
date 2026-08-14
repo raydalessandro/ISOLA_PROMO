@@ -13,7 +13,7 @@
  * Alzare VERSION invalida tutte le cache precedenti.
  */
 
-const VERSION = "isola-v1";
+const VERSION = "isola-v2";
 const SHELL_CACHE = `${VERSION}-shell`;
 const ASSET_CACHE = `${VERSION}-assets`;
 
@@ -22,6 +22,7 @@ const OFFLINE_URL = "/offline";
 const PRECACHE = [
   "/",
   "/mondo",
+  "/giornate",
   "/storie",
   "/mappa",
   "/libro",
