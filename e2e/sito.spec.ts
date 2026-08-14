@@ -87,6 +87,24 @@ test.describe("i canali che non esistono ancora", () => {
   });
 });
 
+test.describe("metadati", () => {
+  test("le anteprime social puntano a un indirizzo assoluto e valido", async ({ page }) => {
+    await page.goto("/");
+
+    // Il primo deploy su Vercel e' caduto qui: NEXT_PUBLIC_SITE_URL esisteva
+    // ma era vuota, e la base dei metadati diventava una stringa vuota.
+    const immagine = await page
+      .locator('meta[property="og:image"]')
+      .first()
+      .getAttribute("content");
+
+    expect(immagine).toBeTruthy();
+    expect(() => new URL(immagine!)).not.toThrow();
+    expect(new URL(immagine!).hostname).not.toBe("");
+    expect(immagine).toContain("/media/libro/vol1-fronte.webp");
+  });
+});
+
 test.describe("il gioco", () => {
   test("occupa lo schermo e parte davvero", async ({ page }) => {
     await page.goto("/gioco");

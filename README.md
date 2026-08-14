@@ -163,7 +163,14 @@ scripts/
 ## Configurazione
 
 `NEXT_PUBLIC_SITE_URL` imposta il dominio pubblico usato dai metadati assoluti
-(vedi `.env.example`). Su Vercel viene dedotto in automatico se assente.
+(vedi `.env.example`). È facoltativa: `lib/base-url.ts` prova in ordine questa
+variabile, il dominio di produzione del progetto Vercel, l'URL del singolo
+deploy e infine localhost, scartando ogni candidato vuoto o malformato.
+
+Quella catena non è pignoleria difensiva: al primo deploy la variabile esisteva
+su Vercel ma era vuota, e `new URL("")` faceva cadere la build durante la
+raccolta delle pagine. Una variabile impostata a stringa vuota non è una
+variabile assente — su Vercel o le si dà un dominio, o la si toglie.
 
 ## Accessibilità
 

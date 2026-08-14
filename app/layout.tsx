@@ -2,20 +2,11 @@ import type { Metadata, Viewport } from "next";
 
 import "./globals.css";
 import { Shell } from "@/components/shell";
+import { baseUrlDelSito } from "@/lib/base-url";
 import { sito } from "@/lib/canone";
 
-/**
- * Base assoluta per Open Graph e manifest. Su Vercel il dominio arriva come
- * variabile d'ambiente; in locale si ricade su localhost.
- */
-const baseUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
-
 export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
+  metadataBase: baseUrlDelSito(),
   title: { default: sito.titolo, template: `%s — ${sito.nome}` },
   description: sito.descrizione,
   applicationName: sito.nome,
