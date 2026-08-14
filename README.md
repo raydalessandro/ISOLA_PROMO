@@ -88,7 +88,7 @@ come cartografia mostrerebbe un'isola che non è quella dei libri.
 |---|---|---|
 | `personaggi/` | i 18 ritratti canonici | `visual/personaggi/individuali/` |
 | `luoghi/` | il villaggio e i quattro quartieri | `visual/atlante/tavole/`, e per Acqua e Terra `visual/luoghi/` |
-| `isola/` | arte di copertina, mappa aerea, panoramica, notturna | `visual/atlante/` |
+| `isola/` | arte di copertina, la mappa canonica, panoramica, notturna | `visual/atlante/isola/` |
 | `emblema/` | il rosone dei tre venti, marchio del sito | `visual/atlante/emblema/` |
 | `libro/` | i tre render del Volume 1 stampato | originali di Ray |
 | `giornate/` | le 40 illustrazioni social, in due set da 20 | branch `immaginixsito` |

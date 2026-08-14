@@ -127,8 +127,8 @@ export default function Apertura() {
                 <Image
                   src="/media/isola/mappa.webp"
                   alt=""
-                  width={832}
-                  height={1248}
+                  width={1000}
+                  height={1500}
                   sizes="(min-width: 46rem) 46vw, 92vw"
                 />
               </div>
