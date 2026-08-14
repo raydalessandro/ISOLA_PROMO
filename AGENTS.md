@@ -2,6 +2,9 @@
 
 1. `lib/canone.ts` è la fonte unica del sito: storie, venti, volumi, personaggi, luoghi, canali. Le pagine non tengono dati propri.
 2. Il canone vive in `raydalessandro/isola_i3v_visual` ed è **in sola lettura**. `lib/canone.ts` ne è una proiezione pubblica ridotta: se il canone cambia, questo file si corregge a mano.
+2-bis. `lib/legami.ts` è l'**unico file generato** del progetto: lo scrive `scripts/estrai-legami.mjs` dal canone e non si modifica a mano. Contiene i legami fra luoghi, abitanti e storie. Resta una proiezione come `canone.ts`, con una differenza: quella si corregge a mano, questa si rigenera. Il sito **non** dipende dal canone in build — `npm run check` deve funzionare su una macchina che non ce l'ha su disco.
+2-quater. Le coordinate in `legami.ts` sono **simboliche**: dicono in quale quartiere sta una cosa, non dove sta davvero — nel villaggio due edifici distano cinque metri. Le aree dei quartieri si possono disegnare; la disposizione dentro un quartiere si prende dall'illustrazione di reference e dalle storie, mai da quei numeri.
+2-ter. Dal grafo delle storie escono **il dove e il quando, mai come vanno a finire**. Lo script elenca i campi ammessi uno per uno: si allunga quella whitelist, non si toglie da una blacklist. Un campo nuovo nel grafo non deve poter arrivare sul sito da solo.
 3. Non inventare canone. Titoli, specie, mestieri, luoghi e relazioni si prendono dal grafo delle storie o dalle schede visual. Se una cosa non è nel canone, non va sul sito.
 4. **Un canale che non esiste non si linka.** Amazon e i social si dichiarano `url: null` in `canone.ts` e la UI li mostra come "in arrivo". Il link compare il giorno in cui il canale è vivo, non prima.
 5. Niente controlli finti: se un elemento sembra cliccabile, deve fare qualcosa o dichiararsi in attesa.
