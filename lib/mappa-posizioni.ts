@@ -43,14 +43,14 @@ export const segni: SegnoMappa[] = [
     id: "pozza_abbeveratoio_pastori",
     x: 430,
     y: 385,
-    etichetta: "sinistra",
+    etichetta: "sopra",
     nota: "La pozza si vede nel disegno, fra le capanne dei pastori e il prato.",
   },
   {
     id: "pascoli_alti",
     x: 262,
     y: 398,
-    etichetta: "sinistra",
+    etichetta: "sotto",
     nota: "Il prato aperto a nord, in contrasto col bosco che comincia più sotto.",
   },
   {
@@ -85,14 +85,14 @@ export const segni: SegnoMappa[] = [
     id: "forno",
     x: 748,
     y: 650,
-    etichetta: "destra",
+    etichetta: "sopra",
     nota: "Il camino che fuma prima che sia giorno: è il segno del quartiere di Fuoco.",
   },
   {
     id: "fiume_che_gira",
     x: 878,
     y: 645,
-    etichetta: "destra",
+    etichetta: "sotto",
     nota: "Sul braccio est dell'anello, dove il fiume corre largo.",
   },
   {

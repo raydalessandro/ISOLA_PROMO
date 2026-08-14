@@ -81,16 +81,28 @@
 
 /* ---------- la mappa disegnata ---------- */
 
-.mappa-disegnata {
+/* La tavola dipinta sta sotto, i segni sopra: condividono il riquadro perche'
+   l'immagine e' 2:3 e il viewBox e' 1000x1500. Nessun aggiustamento, le
+   coordinate lette sul disegno cadono dove devono. */
+.mappa-interattiva {
   margin: clamp(1.5rem, 4vw, 2.5rem) auto 0;
   max-width: 40rem;
+  position: relative;
 }
 
-.mappa-disegnata svg {
+.mappa-interattiva img {
   border: 1px solid var(--bordo);
   border-radius: var(--raggio-g);
   display: block;
   height: auto;
+  width: 100%;
+}
+
+.mappa-segni {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
   width: 100%;
 }
 
@@ -124,12 +136,12 @@
 .mappa-etichetta {
   fill: var(--inchiostro);
   font-family: var(--sans);
-  font-size: 21px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   paint-order: stroke fill;
   stroke: var(--carta);
   stroke-linejoin: round;
-  stroke-width: 6px;
+  stroke-width: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {

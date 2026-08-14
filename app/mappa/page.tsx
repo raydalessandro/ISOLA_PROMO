@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
+import { MappaIsola } from "@/components/mappa-isola";
+
 export const metadata: Metadata = {
   title: "La mappa",
   description:
@@ -69,17 +71,6 @@ export default function Mappa() {
           </p>
         </div>
 
-        <figure className="mappa-tavola">
-          <Image
-            src="/media/isola/mappa.webp"
-            alt="Mappa dell'isola vista dall'alto: il villaggio al centro, l'anello del Fiume che Gira, le Montagne Gemelle a nord, la foresta a ovest e la Bocca a sud."
-            width={1000}
-            height={1500}
-            priority
-            sizes="(min-width: 46rem) 44rem, 92vw"
-          />
-        </figure>
-
         <div className="mappa-legenda">
           {voci.map((voce) => (
             <div
@@ -92,6 +83,8 @@ export default function Mappa() {
             </div>
           ))}
         </div>
+
+        <MappaIsola />
 
         <div className="mappa-atmosfere">
           {atmosfere.map((a) => (
