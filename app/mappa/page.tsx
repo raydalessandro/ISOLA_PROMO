@@ -94,6 +94,23 @@ export default function Mappa() {
 
         <MappaIsola />
 
+        {/*
+          La tavola dipinta resta, sotto la mappa: è quella stampata nel libro, e
+          il disegno vettoriale la ricalca senza pretendere di sostituirla. Chi
+          consulta usa la mappa qui sopra — si ingrandisce, i luoghi sono
+          cliccabili; chi vuole vedere l'isola guarda questa.
+        */}
+        <figure className="mappa-tavola-dipinta">
+          <Image
+            src="/media/isola/mappa.webp"
+            alt="La tavola dipinta dell'isola: le Montagne Gemelle a nord, l'anello del Fiume che Gira intorno al villaggio con l'Albero Vecchio, la Foresta Intrecciata e gli Orti del Cerchio a ovest, il quartiere di Fuoco a est e la spiaggia col pontile a sud."
+            width={1000}
+            height={1500}
+            sizes="(min-width: 46rem) 40rem, 92vw"
+          />
+          <figcaption>La tavola dipinta, quella stampata nel libro.</figcaption>
+        </figure>
+
         <div className="mappa-atmosfere">
           {atmosfere.map((a) => (
             <figure className="atmosfera" key={a.file}>

@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { DESCRIZIONE_ISOLA } from "@/components/isola/isola-disegnata";
 import { getStoria, personaggi } from "@/lib/canone";
 import { storiePerLuogo } from "@/lib/legami";
 import { COLORI_QUARTIERE, nomeQuartiere } from "@/lib/dove";
@@ -8,15 +9,16 @@ import { segniConLuogo } from "@/lib/mappa-posizioni";
 /*
  * La mappa dell'isola con i luoghi da visitare.
  *
- * La base è la tavola dipinta — la stessa isola stampata sulla quarta di
- * copertina — e i segni le stanno sopra, in uno strato SVG che condivide il suo
- * riquadro: la tavola è 2:3 e il viewBox è 1000×1500, quindi le coordinate lette
- * sul disegno cadono dove devono senza aggiustamenti.
+ * La base è l'isola disegnata (`components/isola/`), un vettoriale che ricalca
+ * la tavola dipinta: stessa geografia, stesso riquadro 1000×1500, quindi le
+ * coordinate lette sul disegno cadono dove devono senza aggiustamenti. I segni
+ * le stanno sopra, in uno strato SVG che condivide quel riquadro.
  *
- * Un vettoriale disegnato al posto della tavola è stato provato e messo da
- * parte: la palette del sito (blu, verde, arancio dei tre punti) non è quella
- * dell'acquerello (teal, oliva, ocra), e la regola 11 non lascia allargarla.
- * Un disegno piatto accanto a una tavola dipinta perde sempre.
+ * La tavola dipinta non sparisce: resta sotto la mappa, a grandezza piena, come
+ * "la tavola stampata nel libro". Il vettoriale è la mappa da consultare — non
+ * sfoca ingrandendo, pesa quanto una pagina invece di mezzo mega, e i suoi
+ * luoghi sono forme, non pixel; la tavola è la stessa isola dipinta a mano, e
+ * quella resta la versione bella.
  *
  * Funziona **senza JavaScript**: ogni segno è un collegamento a un'ancora, e
  * sotto la mappa c'è la stessa lista in forma di testo, con chi ci abita e
@@ -40,12 +42,16 @@ export function MappaIsola() {
   return (
     <>
       <figure className="mappa-interattiva">
+        {/* Il disegno arriva da `/isola.svg`, non dal markup di questa pagina:
+            è un'immagine come lo era la tavola, ma vettoriale — un decimo del
+            peso, e nitida a qualunque ingrandimento. */}
         <Image
-          src="/media/isola/mappa.webp"
-          alt="Mappa dell'isola vista dall'alto: le Montagne Gemelle a nord, l'anello del Fiume che Gira intorno al villaggio con l'Albero Vecchio, la Foresta Intrecciata e gli Orti del Cerchio a ovest, il quartiere di Fuoco a est e la spiaggia col pontile a sud."
+          src="/isola.svg"
+          alt={DESCRIZIONE_ISOLA}
           width={1000}
           height={1500}
           priority
+          unoptimized
           sizes="(min-width: 46rem) 40rem, 92vw"
         />
 

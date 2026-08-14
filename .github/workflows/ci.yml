@@ -35,6 +35,11 @@ jobs:
       - name: Integrità dei file multimediali
         run: npm run check:media
 
+      # I colori del disegno dell'isola dicono da quale punto della tavola
+      # dipinta vengono: qui si va a vedere se è vero.
+      - name: Tavolozza della tavola
+        run: npm run check:tavola
+
       - name: Build
         run: npm run build
 

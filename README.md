@@ -79,6 +79,40 @@ disposizione dentro un quartiere no: quella si prende dall'illustrazione di refe
 (`public/media/isola/mappa.webp`) e dalle storie. Una mappa disegnata leggendo queste coordinate
 come cartografia mostrerebbe un'isola che non è quella dei libri.
 
+### L'isola disegnata
+
+`/mappa` non mostra più una fotografia della tavola: mostra un **vettoriale**, servito da
+`/isola.svg`. È la stessa isola — stessa geografia, stesso riquadro 1000×1500 — ridisegnata
+leggendo la tavola dipinta con una griglia sovrapposta, e i segni cliccabili le cadono sopra
+per coordinate, senza aggiustamenti.
+
+Com'è fatto:
+
+| File | Cosa contiene |
+|---|---|
+| `lib/isola/tratto.ts` | la matita: caso governato, curve morbide, semine dentro una forma |
+| `lib/isola/geografia.ts` | dove stanno le cose, letto sulla tavola |
+| `lib/isola/tavola.ts` | i colori, campionati dalla tavola, con la coordinata del prelievo |
+| `components/isola/` | gli strati del disegno, dal mare alla grana della carta |
+| `app/isola.svg/route.ts` | il disegno servito come immagine |
+
+Tre cose da sapere prima di metterci le mani:
+
+1. **Il disegno è deterministico.** Alberi, onde, scogli e rughe della roccia sono sparsi a
+   caso, ma è un caso con un seme scritto nel codice: il bosco è identico a ogni build, e
+   ricaricare la pagina non lo rimescola. Un `Math.random()` lì dentro cambierebbe l'isola a
+   ogni visita.
+2. **I colori vengono dalla tavola, non dal gusto.** Ogni voce di `tavola.ts` dichiara la
+   coordinata da cui è stata presa, e `npm run check:tavola` va a ricontrollarla sul file
+   dipinto. Un colore aggiustato a naso fa fallire il controllo.
+3. **Il disegno si serve a parte apposta.** Dentro la pagina finirebbe scritto due volte —
+   nel markup e nel payload di React — e peserebbe più della fotografia che sostituisce.
+   Servito da `/isola.svg` è un file solo, in cache, e per questo si porta dentro la
+   tavolozza: un'immagine non legge il CSS di chi la mostra.
+
+La tavola dipinta non è sparita: resta sulla pagina, sotto la mappa, a grandezza piena. Il
+vettoriale è quello che si consulta, la tavola è quella che si guarda.
+
 ### Immagini
 
 `public/media/` contiene le illustrazioni canoniche convertite in WebP a due larghezze
@@ -193,6 +227,7 @@ app/
   mondo/            abitanti e quartieri
   storie/           le dodici storie per volume
   mappa/            l'isola dall'alto
+  isola.svg/        l'isola disegnata, servita come immagine
   libro/            il Volume 1
   gioco/            l'avventura, a schermo pieno
   offline/          ricaduta del service worker
@@ -204,12 +239,15 @@ app/
   styles/           base, shell, home, mondo, storie, mappa, libro
 components/
   shell.tsx           testata, barra bassa, chiusura
+  mappa-isola.tsx     i segni cliccabili e le schede dei luoghi
+  isola/              il disegno dell'isola, strato per strato
   icone.tsx           icone della barra bassa
   dati-strutturati.tsx JSON-LD del Volume 1
   gioco/            console e stili non globali del gioco
 lib/
   canone.ts         fonte unica, scritta a mano
   legami.ts         luoghi, abitanti e storie: generato dal canone
+  isola/            matita, geografia e tavolozza del disegno
   gioco/            motore portato dal prototipo
 e2e/                test Playwright
 public/
@@ -220,6 +258,7 @@ scripts/
   make-icons.mjs     rigenera le icone dal rosone
   check-media.mjs    verifica l'integrità dei binari
   estrai-legami.mjs  rigenera lib/legami.ts dal canone
+  campiona-tavola.mjs controlla i colori del disegno sulla tavola dipinta
 ```
 
 ## Configurazione
