@@ -1,0 +1,266 @@
+/* La prima pagina: l'isola, i tre venti, cosa c'è dietro. */
+
+.apertura {
+  padding-block: clamp(2rem, 6vw, 4.5rem) clamp(3rem, 8vw, 5.5rem);
+}
+
+.apertura-griglia {
+  align-items: center;
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+@media (min-width: 54rem) {
+  .apertura-griglia {
+    grid-template-columns: 1fr 0.85fr;
+  }
+}
+
+.apertura-testo .tre-punti {
+  font-size: 1.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.apertura-testo h1 em {
+  font-style: normal;
+  position: relative;
+}
+
+/* Una sottolineatura ad acquerello sotto "Tre Venti": tre tratti, tre colori. */
+.apertura-testo h1 em::after {
+  background: linear-gradient(
+    90deg,
+    var(--taglio) 0 33%,
+    var(--intreccio) 33% 66%,
+    var(--mulinello) 66% 100%
+  );
+  border-radius: 3px;
+  bottom: -0.06em;
+  content: "";
+  height: 0.09em;
+  left: 0;
+  opacity: 0.85;
+  position: absolute;
+  right: 0;
+}
+
+.apertura-promessa {
+  color: var(--morbido);
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.35rem);
+  margin-top: 1.5rem;
+  max-width: 30rem;
+}
+
+.apertura-sotto {
+  color: var(--tenue);
+  margin-top: 1rem;
+  max-width: 30rem;
+}
+
+.apertura-azioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 2rem;
+}
+
+/* La tavola: l'illustrazione tenuta come una pagina incollata su carta. */
+.tavola {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  box-shadow: var(--ombra-alta);
+  overflow: hidden;
+  padding: clamp(0.6rem, 1.6vw, 0.9rem);
+  rotate: -0.9deg;
+}
+
+.tavola img {
+  border-radius: calc(var(--raggio-g) - 8px);
+  width: 100%;
+}
+
+.tavola figcaption {
+  color: var(--tenue);
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  padding: 0.75rem 0.35rem 0.15rem;
+  text-align: center;
+}
+
+/* ---------- i tre venti ---------- */
+
+.venti {
+  background: var(--carta-scura);
+  border-block: 1px solid var(--bordo);
+}
+
+.venti-griglia {
+  display: grid;
+  gap: 1.1rem;
+}
+
+@media (min-width: 46rem) {
+  .venti-griglia {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.vento {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  border-top: 4px solid var(--colore-vento);
+  padding: clamp(1.2rem, 3vw, 1.7rem);
+}
+
+.vento .occhiello {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.vento h3 {
+  margin-bottom: 0.6rem;
+}
+
+.vento p {
+  color: var(--morbido);
+}
+
+/* ---------- fasce di rimando ---------- */
+
+.rimandi {
+  display: grid;
+  gap: 1.1rem;
+}
+
+@media (min-width: 46rem) {
+  .rimandi {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.rimando {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.rimando:hover {
+  border-color: var(--bordo-forte);
+  color: inherit;
+  transform: translateY(-2px);
+}
+
+.rimando-figura {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  position: relative;
+}
+
+.rimando-figura img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.rimando-corpo {
+  padding: clamp(1.1rem, 3vw, 1.6rem);
+}
+
+.rimando-corpo .occhiello {
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+.rimando-corpo p {
+  color: var(--morbido);
+  margin-top: 0.5rem;
+}
+
+.rimando-corpo .freccia {
+  color: var(--taglio);
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.9rem;
+}
+
+/* ---------- il libro in vetrina ---------- */
+
+.vetrina {
+  background: var(--carta-scura);
+  border-block: 1px solid var(--bordo);
+}
+
+.vetrina-griglia {
+  align-items: center;
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+@media (min-width: 54rem) {
+  .vetrina-griglia {
+    grid-template-columns: 0.9fr 1fr;
+  }
+}
+
+.vetrina-copertina img {
+  filter: drop-shadow(0 24px 48px rgba(36, 28, 20, 0.22));
+  margin-inline: auto;
+  max-width: 22rem;
+  width: 100%;
+}
+
+.vetrina h2 {
+  margin-bottom: 0.4rem;
+}
+
+.vetrina-sottotitolo {
+  color: var(--mulinello-testo);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.vetrina p {
+  color: var(--morbido);
+  max-width: var(--misura);
+}
+
+.vetrina-elenco {
+  list-style: none;
+  margin: 1.3rem 0;
+}
+
+.vetrina-elenco li {
+  border-bottom: 1px solid var(--bordo);
+  padding: 0.55rem 0 0.55rem 1.6rem;
+  position: relative;
+}
+
+.vetrina-elenco li::before {
+  color: var(--mulinello);
+  content: "❧";
+  left: 0;
+  position: absolute;
+}
+
+.vetrina-azioni {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+}

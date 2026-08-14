@@ -1,0 +1,80 @@
+/* La mappa: una tavola grande e le sue didascalie. */
+
+.mappa-tavola {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  box-shadow: var(--ombra);
+  margin-inline: auto;
+  max-width: 44rem;
+  overflow: hidden;
+  padding: clamp(0.7rem, 2vw, 1.2rem);
+}
+
+.mappa-tavola img {
+  border-radius: calc(var(--raggio-g) - 8px);
+  width: 100%;
+}
+
+.mappa-legenda {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: clamp(2rem, 5vw, 3rem);
+}
+
+@media (min-width: 46rem) {
+  .mappa-legenda {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.mappa-voce {
+  border-left: 3px solid var(--colore-voce, var(--bordo-forte));
+  padding-left: 1.1rem;
+}
+
+.mappa-voce h3 {
+  font-size: 1.1rem;
+}
+
+.mappa-voce p {
+  color: var(--morbido);
+  font-size: 0.97rem;
+  margin-top: 0.3rem;
+}
+
+.mappa-atmosfere {
+  display: grid;
+  gap: clamp(1rem, 2.6vw, 1.5rem);
+  margin-top: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+@media (min-width: 46rem) {
+  .mappa-atmosfere {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.atmosfera {
+  border-radius: var(--raggio-g);
+  overflow: hidden;
+  position: relative;
+}
+
+.atmosfera img {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  width: 100%;
+}
+
+.atmosfera figcaption {
+  background: linear-gradient(transparent, rgba(20, 15, 10, 0.78));
+  bottom: 0;
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.86rem;
+  left: 0;
+  padding: 2.5rem 1rem 0.9rem;
+  position: absolute;
+  right: 0;
+}

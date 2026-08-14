@@ -1,0 +1,9 @@
+/* Solo import. Gli stili veri vivono in app/styles/, divisi per superficie. */
+
+@import "./styles/base.css";
+@import "./styles/shell.css";
+@import "./styles/home.css";
+@import "./styles/mondo.css";
+@import "./styles/storie.css";
+@import "./styles/mappa.css";
+@import "./styles/libro.css";

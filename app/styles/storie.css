@@ -1,0 +1,90 @@
+/* Le dodici storie, raccolte per volume. */
+
+.volume + .volume {
+  margin-top: clamp(2.6rem, 6vw, 4rem);
+}
+
+.volume-testa {
+  align-items: baseline;
+  border-bottom: 2px solid var(--colore-vento, var(--bordo-forte));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin-bottom: 1.3rem;
+  padding-bottom: 0.75rem;
+}
+
+.volume-numero {
+  color: var(--colore-vento-testo, var(--tenue));
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.volume-testa h2 {
+  font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.75rem);
+}
+
+.volume-stato {
+  color: var(--tenue);
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  margin-left: auto;
+  text-transform: uppercase;
+}
+
+.elenco-storie {
+  counter-reset: storia;
+  display: grid;
+  gap: 0.7rem;
+  list-style: none;
+}
+
+.storia {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  display: grid;
+  gap: 0.2rem 1.1rem;
+  grid-template-columns: auto 1fr;
+  padding: clamp(0.95rem, 2.4vw, 1.3rem);
+}
+
+.storia::before {
+  color: var(--colore-vento-testo, var(--tenue));
+  content: counter(storia, decimal-leading-zero);
+  counter-increment: storia;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  grid-row: span 2;
+  letter-spacing: 0.06em;
+  padding-top: 0.28rem;
+}
+
+.storia h3 {
+  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.25rem);
+}
+
+.storia p {
+  color: var(--morbido);
+  font-size: 0.97rem;
+}
+
+.nota-testi {
+  background: var(--carta-scura);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  color: var(--morbido);
+  margin-top: clamp(2.5rem, 6vw, 3.5rem);
+  padding: clamp(1.3rem, 3.5vw, 2rem);
+}
+
+.nota-testi h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.6rem;
+}

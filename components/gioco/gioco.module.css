@@ -1,0 +1,203 @@
+/*
+ * La console dell'avventura. Stili non globali: il gioco è l'unica superficie
+ * con un linguaggio suo — pixel, schermo verde, tasti — e non deve poter
+ * sporcare il resto del sito.
+ *
+ * Rispetto al prototipo cambia solo la scocca: legno e ottone al posto del
+ * grigio, e il fondo è il mare dell'isola invece di un azzurro qualunque.
+ */
+
+.superficie {
+  align-items: center;
+  background: linear-gradient(165deg, #4d94a8 0%, #2f6f8b 46%, #1e4a66 100%);
+  display: flex;
+  height: 100svh;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  width: 100%;
+}
+
+/*
+ * Su un telefono la console riempie lo schermo: bezel in alto, tasti sotto il
+ * pollice. Su un monitor alto quella stessa regola lascerebbe una voragine fra
+ * schermo e comandi, quindi l'altezza si ferma e il blocco si centra.
+ */
+.console {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 780px;
+  max-width: 520px;
+  padding: max(10px, env(safe-area-inset-top)) 8px calc(14px + env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+.uscita {
+  align-items: center;
+  align-self: flex-start;
+  background: rgba(255, 253, 249, 0.92);
+  border-radius: 999px;
+  color: #24343f;
+  display: inline-flex;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  margin-bottom: 8px;
+  padding: 0.42rem 0.9rem;
+  text-decoration: none;
+}
+
+.uscita:hover {
+  background: #fff;
+  color: #24343f;
+}
+
+.uscita:focus-visible {
+  outline: 3px solid #fffdf9;
+  outline-offset: 3px;
+}
+
+.scocca {
+  align-items: center;
+  background: #46352a;
+  border-radius: 12px 12px 34px 12px;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.32);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 14px 6px;
+  width: 100%;
+}
+
+.schermo {
+  aspect-ratio: 10 / 9;
+  background: #9ac86a;
+  border: 2px solid #23180f;
+  border-radius: 3px;
+  display: block;
+  image-rendering: pixelated;
+  margin: 0 auto;
+  max-height: 52vh;
+  width: 100%;
+}
+
+.targhetta {
+  color: #f0e2cc;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding-bottom: 4px;
+}
+
+.targhetta em {
+  background: linear-gradient(90deg, #7fb2d6, #7fc48a, #e0a05a);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-style: normal;
+}
+
+.comandi {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  justify-content: space-between;
+  padding: 16px 6px 0;
+  width: 100%;
+}
+
+.croce {
+  display: grid;
+  grid-template-columns: repeat(3, 54px);
+  grid-template-rows: repeat(3, 54px);
+}
+
+.direzione {
+  align-items: center;
+  background: #5a4638;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 3px 0 #2b2019;
+  color: #e6d3ba;
+  display: flex;
+  font-size: 22px;
+  justify-content: center;
+}
+
+.direzione:active,
+.direzione:global(.on) {
+  background: #6f5744;
+  box-shadow: 0 1px 0 #2b2019;
+  transform: translateY(2px);
+}
+
+.perno {
+  background: #5a4638;
+  border-radius: 0;
+  pointer-events: none;
+}
+
+.su {
+  grid-area: 1 / 2;
+}
+
+.sinistra {
+  grid-area: 2 / 1;
+}
+
+.centro {
+  grid-area: 2 / 2;
+}
+
+.destra {
+  grid-area: 2 / 3;
+}
+
+.giu {
+  grid-area: 3 / 2;
+}
+
+.azioni {
+  display: flex;
+  gap: 18px;
+  padding-right: 6px;
+  transform: rotate(-20deg);
+}
+
+.azione {
+  background: #2f7d4f;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 0 #1c5233;
+  color: #e8f6ec;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  height: 64px;
+  width: 64px;
+}
+
+.azione:active,
+.azione:global(.on) {
+  box-shadow: 0 1px 0 #1c5233;
+  transform: translateY(3px);
+}
+
+.azioneB {
+  margin-top: 26px;
+}
+
+.direzione:focus-visible,
+.azione:focus-visible {
+  outline: 3px solid #fffdf9;
+  outline-offset: 2px;
+}

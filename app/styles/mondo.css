@@ -1,0 +1,116 @@
+/* Chi vive sull'isola: schede a ritratto, raggruppate. */
+
+.gruppo + .gruppo {
+  margin-top: clamp(2.8rem, 7vw, 4.5rem);
+}
+
+.gruppo-testa {
+  align-items: baseline;
+  border-bottom: 1px solid var(--bordo);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  margin-bottom: clamp(1.3rem, 3vw, 2rem);
+  padding-bottom: 0.8rem;
+}
+
+.gruppo-testa h2 {
+  font-size: clamp(1.35rem, 1.15rem + 1vw, 1.9rem);
+}
+
+.gruppo-testa p {
+  color: var(--tenue);
+  flex: 1 1 18rem;
+}
+
+.abitanti {
+  display: grid;
+  gap: clamp(1rem, 2.6vw, 1.6rem);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr));
+}
+
+.abitante {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  overflow: hidden;
+}
+
+.abitante-figura {
+  aspect-ratio: 3 / 4;
+  background: var(--carta-scura);
+  overflow: hidden;
+}
+
+.abitante-figura img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  width: 100%;
+}
+
+.abitante-corpo {
+  padding: 0.95rem 1.05rem 1.15rem;
+}
+
+.abitante-corpo h3 {
+  font-size: 1.15rem;
+}
+
+.abitante-specie {
+  color: var(--mulinello-testo);
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  margin: 0.25rem 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.abitante-corpo p {
+  color: var(--morbido);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ---------- i luoghi ---------- */
+
+.luoghi {
+  display: grid;
+  gap: clamp(1rem, 2.6vw, 1.6rem);
+}
+
+@media (min-width: 46rem) {
+  .luoghi {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.luogo {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  overflow: hidden;
+}
+
+.luogo-figura {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.luogo-figura img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.luogo-corpo {
+  padding: 1.05rem 1.15rem 1.3rem;
+}
+
+.luogo-corpo p {
+  color: var(--morbido);
+  font-size: 0.95rem;
+  margin-top: 0.4rem;
+}
