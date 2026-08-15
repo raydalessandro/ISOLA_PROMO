@@ -227,3 +227,26 @@
   margin-top: 0.8rem;
   padding-top: 0.6rem;
 }
+
+/* ---------- la tavola dipinta ---------- */
+
+/* Sta sotto la mappa disegnata, alla stessa larghezza: si confrontano a occhio
+   senza che nessuna delle due si allarghi a spese dell'altra. */
+.mappa-tavola-dipinta {
+  margin: clamp(1.5rem, 4vw, 2.5rem) auto 0;
+  max-width: 40rem;
+}
+
+.mappa-tavola-dipinta img {
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  width: 100%;
+}
+
+.mappa-tavola-dipinta figcaption {
+  color: var(--tenue);
+  font-family: var(--sans);
+  font-size: 0.86rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}

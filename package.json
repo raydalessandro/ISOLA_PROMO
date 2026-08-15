@@ -10,8 +10,9 @@
     "typecheck": "tsc --noEmit",
     "icons": "node scripts/make-icons.mjs",
     "check:media": "node scripts/check-media.mjs",
+    "check:tavola": "node scripts/campiona-tavola.mjs",
     "test:e2e": "next build && playwright test",
-    "check": "npm run typecheck && npm run lint && npm run check:media && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run check:media && npm run check:tavola && npm run build"
   },
   "dependencies": {
     "next": "^16.0.0",

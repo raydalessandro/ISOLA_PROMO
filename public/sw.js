@@ -13,12 +13,13 @@
  * Alzare VERSION invalida tutte le cache precedenti.
  */
 
-const VERSION = "isola-v2";
+const VERSION = "isola-v3";
 const SHELL_CACHE = `${VERSION}-shell`;
 const ASSET_CACHE = `${VERSION}-assets`;
 
 const OFFLINE_URL = "/offline";
 
+/* Le pagine: vanno nella cache della shell, quella che serve le navigazioni. */
 const PRECACHE = [
   "/",
   "/mondo",
@@ -28,6 +29,18 @@ const PRECACHE = [
   "/libro",
   "/gioco",
   OFFLINE_URL,
+];
+
+/*
+ * Le risorse: vanno nell'altra cache, perché è lì che il fetch andrà a
+ * cercarle. Precaricarle nella shell non servirebbe a niente — le si
+ * scaricherebbe due volte e offline non si troverebbero lo stesso.
+ *
+ * `/isola.svg` è il disegno della mappa: è la mappa stessa, non un ornamento,
+ * e senza, /mappa senza rete mostrerebbe una cornice vuota.
+ */
+const PRECACHE_RISORSE = [
+  "/isola.svg",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/maskable-512.png",
@@ -37,11 +50,15 @@ const PRECACHE = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
-      const cache = await caches.open(SHELL_CACHE);
+      const shell = await caches.open(SHELL_CACHE);
+      const risorse = await caches.open(ASSET_CACHE);
       // addAll fallisce in blocco: si aggiunge una risorsa per volta, così una
       // rotta momentaneamente irraggiungibile non annulla l'installazione.
       await Promise.all(
-        PRECACHE.map(async (url) => {
+        [
+          ...PRECACHE.map((url) => [shell, url]),
+          ...PRECACHE_RISORSE.map((url) => [risorse, url]),
+        ].map(async ([cache, url]) => {
           try {
             await cache.add(new Request(url, { cache: "reload" }));
           } catch {
@@ -73,7 +90,9 @@ const isImmutableAsset = (url) =>
   url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/");
 
 const isImage = (request, url) =>
-  request.destination === "image" || url.pathname.startsWith("/media/");
+  request.destination === "image" ||
+  url.pathname.startsWith("/media/") ||
+  url.pathname === "/isola.svg";
 
 /*
  * Le immagini passano da /_next/image con una query diversa per ogni larghezza:

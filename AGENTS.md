@@ -14,6 +14,8 @@
 9. La firma pubblica è **Beatrice Mercuri / Spirale Editrice**. Ray, il grafo, la pipeline e i repo di lavorazione non compaiono da nessuna parte sul sito.
 10. Il pubblico che legge queste pagine è il genitore, non il bambino. L'unica superficie rivolta ai bambini è `/gioco`.
 11. La palette non si allarga a piacere: i tre colori dei venti sono i tre punti stampati sulla quarta di copertina del Volume 1, la carta è il suo fondo. Chi aggiunge un colore dice da dove viene.
+11-bis. I colori del **disegno dell'isola** (`lib/isola/tavola.ts`) sono un'eccezione dichiarata alla regola 11, non un'apertura: sono campionati uno per uno dalla tavola dipinta, ciascuno con la coordinata del prelievo scritta accanto, e `npm run check:tavola` li ricontrolla sul file. Vivono dentro `/isola.svg` e non escono: non si usano per testi, bottoni o superfici del sito.
+11-ter. Il disegno dell'isola è **deterministico**: quello che sembra sparso a caso — alberi, onde, scogli — nasce da semi scritti nel codice. Niente `Math.random()`, niente `Date`: due build devono produrre lo stesso file.
 12. Il testo sta a 4.5:1 di contrasto. `--tenue` è il grigio più scuro ammesso sulla carta, e l'arancio dei punti come testo va usato nella variante `--mulinello-testo`: il pieno non ce la fa.
 13. Gli stili vivono in `app/styles/`, uno per superficie. `globals.css` si limita agli import. Il gioco usa CSS Modules e non tocca il resto.
 14. `lib/gioco/motore.js` è il prototipo di Ray portato quasi alla lettera: resta JavaScript, resta fuori da ESLint, e si modifica solo per farlo funzionare — non per riscriverlo in stile. Il contratto verso l'app è `motore.d.ts`.
