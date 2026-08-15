@@ -61,6 +61,7 @@ export const TAVOLA: Record<string, { colore: string; da: string }> = {
   /* La sabbia */
   "tav-sabbia": { colore: "#e1c793", da: "(430,1300) la spiaggia" },
   "tav-sabbia-chiara": { colore: "#f0dcb4", da: "--tav-sabbia schiarita: la sabbia asciutta più in alto" },
+  "tav-sabbia-ombra": { colore: "#c2a672", da: "--tav-sabbia scurita: il segno che una conchiglia lascia sulla sabbia" },
 
   /* Il costruito */
   "tav-tetto": { colore: "#a77d48", da: "(556,858) un tetto del villaggio" },

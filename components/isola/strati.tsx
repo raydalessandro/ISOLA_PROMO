@@ -37,10 +37,40 @@ const ONDE = (() => {
     .map((p) => ({ p: [Math.round(p[0]), Math.round(p[1])] as P, l: Math.round(fra(rnd, 9, 26)), o: fra(rnd, 0.14, 0.4) }));
 })();
 
+/* Chiazze di fondale, e gli scogli che spuntano al largo: sulla tavola ce ne
+   sono a sud-ovest e a sud-est, dove la costa si sbriciola in mare. */
+const CHIAZZE = (() => {
+  const rnd = caso(2727);
+  const larga = verso(COSTA_VERA, 1.2);
+  return semina([[0, 0], [1000, 0], [1000, 1500], [0, 1500]], 26, rnd, { distanza: 150 })
+    .filter((p) => !dentro(larga, p))
+    .map((p) => ({
+      d: macchia(p[0], p[1], fra(rnd, 60, 150), rnd, { punte: 9, irregolare: 0.5 }),
+      chiara: rnd() > 0.45,
+      o: fra(rnd, 0.08, 0.2),
+    }));
+})();
+
+const SCOGLI_AL_LARGO: { x: number; y: number; v: number; r: number }[] = [
+  { x: 138, y: 1276, v: 2, r: 9 }, { x: 168, y: 1312, v: 5, r: 5 },
+  { x: 110, y: 1232, v: 3, r: 5 }, { x: 846, y: 1272, v: 1, r: 8 },
+  { x: 878, y: 1232, v: 4, r: 5 }, { x: 818, y: 1306, v: 6, r: 5 },
+  { x: 952, y: 992, v: 0, r: 6 }, { x: 54, y: 706, v: 7, r: 5 },
+  { x: 70, y: 972, v: 2, r: 5 }, { x: 934, y: 474, v: 5, r: 5 },
+];
+
 export function Mare() {
   return (
     <g>
       <rect x="-20" y="-20" width="1040" height="1540" fill="url(#g-mare)" />
+
+      {/* Le chiazze dell'acquerello: il mare della tavola non è mai di un colore
+          solo, ha i fondali che si vedono attraverso. */}
+      <g filter="url(#f-sfoca)">
+        {CHIAZZE.map((c, i) => (
+          <path key={i} d={c.d} fill={c.chiara ? "var(--tav-mare-chiaro)" : "var(--tav-mare-fondo)"} opacity={c.o.toFixed(2)} />
+        ))}
+      </g>
 
       {/* L'ombra dell'isola nell'acqua: senza, l'isola sta appiccicata al fondo
           invece di galleggiarci sopra. */}
@@ -67,6 +97,21 @@ export function Mare() {
         opacity="0.5"
         filter="url(#f-sfoca-corta)"
       />
+
+      {/*
+       * Gli scogli al largo. La misura si cambia scegliendo un altro sasso, non
+       * scalando: su un `use` la scala si applica prima di `x` e `y`, e il sasso
+       * finirebbe da un'altra parte invece che più grande dov'è.
+       */}
+      <g>
+        {SCOGLI_AL_LARGO.map((s, i) => (
+          <g key={i}>
+            <use href={sasso(s.v, s.r * 1.7)} x={s.x} y={s.y} fill="var(--tav-schiuma)" opacity="0.4" filter="url(#f-sfoca-corta)" />
+            <use href={sasso(s.v, s.r)} x={s.x} y={s.y} fill="var(--tav-roccia-ombra)" opacity="0.9" />
+            <use href={sasso(s.v, s.r * 0.55)} x={s.x - 2} y={s.y - 2} fill="var(--tav-roccia-luce)" opacity="0.55" />
+          </g>
+        ))}
+      </g>
     </g>
   );
 }
@@ -226,7 +271,7 @@ export function Acque() {
         <path
           d={macchia(POZZA.cx, POZZA.cy, POZZA.rx + 6, caso(414), { punte: 11, irregolare: 0.22, schiaccia: POZZA.ry / POZZA.rx })}
           fill="var(--tav-fiume-riva)"
-          opacity="0.7"
+          opacity="0.5"
         />
         <path
           d={macchia(POZZA.cx, POZZA.cy, POZZA.rx, caso(415), { punte: 11, irregolare: 0.2, schiaccia: POZZA.ry / POZZA.rx })}
@@ -401,7 +446,10 @@ export function Montagne() {
    pescato da una terna: chiome tutte dello stesso verde non fanno un bosco,
    fanno una tappezzeria. */
 const TONI: Record<string, readonly string[]> = {
-  fitto: ["var(--tav-bosco)", "var(--tav-bosco-ombra)", "var(--tav-bosco)", "var(--tav-bosco-luce)"],
+  fitto: [
+    "var(--tav-bosco)", "var(--tav-bosco-ombra)", "var(--tav-bosco)",
+    "var(--tav-bosco-luce)", "var(--tav-bosco)", "var(--tav-fogliame-luce)",
+  ],
   rado: ["var(--tav-bosco-luce)", "var(--tav-fogliame-luce)", "var(--tav-bosco-luce)", "var(--tav-bosco)"],
   secco: ["var(--tav-bosco-secco)", "var(--tav-bosco-luce)", "var(--tav-bosco-secco)"],
 };
@@ -409,10 +457,16 @@ const TONI: Record<string, readonly string[]> = {
 /** Un albero piantato: il simbolo da richiamare e dove. */
 type Pianta = { href: string; x: number; y: number; tono: string };
 
-const pianta = (rnd: () => number, p: P, raggio: readonly [number, number], toni: readonly string[]): Pianta => {
+const pianta = (
+  rnd: () => number,
+  p: P,
+  raggio: readonly [number, number],
+  toni: readonly string[],
+  fitto = false,
+): Pianta => {
   const r = fra(rnd, raggio[0], raggio[1]);
   return {
-    href: chioma(Math.floor(fra(rnd, 0, 3)), r),
+    href: chioma(Math.floor(fra(rnd, 0, 3)), r, fitto),
     x: Math.round(p[0]),
     y: Math.round(p[1]),
     tono: scegli(rnd, toni),
@@ -439,7 +493,7 @@ const ALBERI = perTono(
   BOSCHI.flatMap((b) => {
     const rnd = caso(b.seme);
     return semina(b.forma, b.quanti, rnd, { distanza: b.distanza }).map((p) =>
-      pianta(rnd, p, b.raggio, TONI[b.tono]),
+      pianta(rnd, p, b.raggio, TONI[b.tono], b.tono === "fitto"),
     );
   }),
 );
@@ -458,7 +512,7 @@ const FASCIA_COSTIERA = perTono(
 
     return semina(orlo, 900, rnd, { distanza: 19 })
       .filter((p) => !dentro(interno, p) && !dentro(SPIAGGIA, p) && p[1] > 320)
-      .map((p) => pianta(rnd, p, [10, 19], TONI.fitto));
+      .map((p) => pianta(rnd, p, [10, 19], TONI.fitto, true));
   })(),
 );
 
@@ -519,52 +573,80 @@ export function Boschi() {
 
 /* ---------- gli Orti del Cerchio ---------- */
 
+/*
+ * I campi a cerchi concentrici, che sulla tavola sono la cosa più
+ * riconoscibile dell'isola dopo l'Albero. Non è un disco marrone con sopra dei
+ * pallini: è una radura chiara aperta nel bosco, con i solchi che girano e le
+ * file di colture piantate lungo il solco. Le file si disegnano come trattini
+ * orientati come il giro — un punto tondo non dice da che parte si zappa.
+ */
 const COLTURE = (() => {
   const rnd = caso(2440);
-  const punti: { x: number; y: number; r: number; fiore: boolean }[] = [];
+  const file: { d: string; fiore: boolean }[] = [];
+
   for (let g = 0; g < ORTI.giri; g++) {
-    const k = (g + 1) / ORTI.giri;
-    const quanti = 12 + g * 10;
+    const k = (g + 0.6) / ORTI.giri;
+    const quanti = 14 + g * 10;
+
     for (let i = 0; i < quanti; i++) {
-      const a = (i / quanti) * Math.PI * 2 + fra(rnd, -0.12, 0.12);
-      punti.push({
-        x: ORTI.cx + Math.cos(a) * ORTI.rx * k * fra(rnd, 0.9, 1.02),
-        y: ORTI.cy + Math.sin(a) * ORTI.ry * k * fra(rnd, 0.9, 1.02),
-        r: fra(rnd, 2.2, 4.2),
-        fiore: rnd() > 0.6,
+      const a = (i / quanti) * Math.PI * 2 + fra(rnd, -0.06, 0.06);
+      const x = ORTI.cx + Math.cos(a) * ORTI.rx * k;
+      const y = ORTI.cy + Math.sin(a) * ORTI.ry * k;
+      /* Il trattino segue la tangente del giro: è il verso del filare. */
+      const dx = -Math.sin(a) * fra(rnd, 5, 9);
+      const dy = Math.cos(a) * fra(rnd, 4, 7);
+      file.push({
+        d: `M${(x - dx / 2).toFixed(1)} ${(y - dy / 2).toFixed(1)}l${dx.toFixed(1)} ${dy.toFixed(1)}`,
+        fiore: rnd() > 0.62,
       });
     }
   }
-  return punti;
+
+  return file;
 })();
 
 export function Orti() {
   return (
     <g>
-      <ellipse cx={ORTI.cx} cy={ORTI.cy} rx={ORTI.rx + 14} ry={ORTI.ry + 12} fill="var(--tav-orto)" opacity="0.8" filter="url(#f-acquerello)" />
+      {/* La radura: gli orti stanno in un'apertura del bosco, non sul bosco. */}
+      <path
+        d={macchia(ORTI.cx, ORTI.cy, ORTI.rx + 20, caso(2441), { punte: 13, irregolare: 0.16, schiaccia: ORTI.ry / ORTI.rx })}
+        fill="var(--tav-prato-chiaro)"
+        filter="url(#f-acquerello)"
+      />
+      <path
+        d={macchia(ORTI.cx, ORTI.cy, ORTI.rx + 6, caso(2442), { punte: 13, irregolare: 0.14, schiaccia: ORTI.ry / ORTI.rx })}
+        fill="var(--tav-orto)"
+        opacity="0.55"
+        filter="url(#f-acquerello)"
+      />
 
-      <g fill="none" stroke="var(--tav-orto-riga)" strokeWidth="2.6" opacity="0.7">
+      {/* I solchi: quattro giri, uno dentro l'altro. */}
+      <g fill="none" stroke="var(--tav-orto-riga)" strokeWidth="2.2" opacity="0.6">
         {Array.from({ length: ORTI.giri }, (_, g) => {
           const k = (g + 1) / ORTI.giri;
-          return <ellipse key={g} cx={ORTI.cx} cy={ORTI.cy} rx={ORTI.rx * k} ry={ORTI.ry * k} />;
+          return <ellipse key={g} cx={ORTI.cx} cy={ORTI.cy} rx={(ORTI.rx * k).toFixed(1)} ry={(ORTI.ry * k).toFixed(1)} />;
         })}
       </g>
 
-      <g>
+      <g strokeWidth="3.4" strokeLinecap="round" fill="none">
         {COLTURE.map((c, i) => (
-          <circle
-            key={i}
-            cx={c.x.toFixed(1)}
-            cy={c.y.toFixed(1)}
-            r={c.r.toFixed(1)}
-            fill={c.fiore ? "var(--tav-orto-fiore)" : "var(--tav-bosco-luce)"}
-            opacity="0.7"
-          />
+          <path key={i} d={c.d} stroke={c.fiore ? "var(--tav-orto-fiore)" : "var(--tav-fogliame-luce)"} opacity="0.8" />
         ))}
       </g>
 
       {/* Il muretto a secco che chiude gli orti. */}
-      <ellipse cx={ORTI.cx} cy={ORTI.cy} rx={ORTI.rx + 14} ry={ORTI.ry + 12} fill="none" stroke="var(--tav-roccia-ombra)" strokeWidth="3" opacity="0.5" strokeDasharray="8 6" />
+      <ellipse
+        cx={ORTI.cx}
+        cy={ORTI.cy}
+        rx={ORTI.rx + 14}
+        ry={ORTI.ry + 12}
+        fill="none"
+        stroke="var(--tav-roccia-ombra)"
+        strokeWidth="3"
+        opacity="0.45"
+        strokeDasharray="9 7"
+      />
     </g>
   );
 }
@@ -769,11 +851,45 @@ export function AlberoVecchio() {
 
 /* ---------- la Bocca, il pontile, la barca ---------- */
 
+/*
+ * Le conchiglie. Il luogo si chiama Spiaggia delle Conchiglie, e su una mappa
+ * disegnata a mano quel nome si può mantenere: una manciata di gusci chiari
+ * sulla sabbia, dove la battigia le ha lasciate.
+ */
+const CONCHIGLIE = (() => {
+  const rnd = caso(1919);
+  return semina(
+    [[540, 1300], [700, 1288], [756, 1312], [700, 1340], [600, 1348], [548, 1330]],
+    26, rnd, { distanza: 13 },
+  ).map((p) => ({
+    x: Math.round(p[0]),
+    y: Math.round(p[1]),
+    r: fra(rnd, 1.8, 3.4),
+    aperta: rnd() > 0.5,
+  }));
+})();
+
 export function Approdo() {
   const assi = Array.from({ length: 9 }, (_, i) => i / 8);
 
   return (
     <g>
+      <g>
+        {CONCHIGLIE.map((c, i) => (
+          <g key={i}>
+            <ellipse cx={c.x} cy={c.y} rx={c.r.toFixed(1)} ry={(c.r * 0.72).toFixed(1)} fill="var(--tav-schiuma)" opacity="0.85" />
+            {c.aperta && (
+              <path
+                d={`M${c.x - c.r} ${c.y}q${c.r} ${-c.r * 0.9} ${c.r * 2} 0`}
+                fill="none"
+                stroke="var(--tav-sabbia-ombra)"
+                strokeWidth="0.7"
+                opacity="0.7"
+              />
+            )}
+          </g>
+        ))}
+      </g>
       <path d={nastro([PONTILE.da, PONTILE.a], PONTILE.larghezza, PONTILE.larghezza)} fill="var(--tav-tetto-scuro)" />
       <g stroke="var(--tav-inchiostro)" strokeWidth="1.3" opacity="0.5" fill="none">
         {assi.map((t, i) => {

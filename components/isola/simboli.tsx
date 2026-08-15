@@ -52,14 +52,23 @@ const CHIOME = [0, 1, 2].flatMap((v) => {
   }));
 });
 
-/** Il nome del simbolo per un albero di raggio `r`: si prende la misura più vicina. */
-export const chioma = (v: number, r: number) => {
+/**
+ * Il nome del simbolo per un albero di raggio `r`: si prende la misura più
+ * vicina, e si sceglie se l'albero porta la sua ombra a terra.
+ *
+ * Nel bosco fitto l'ombra si toglie. Sembra un dettaglio e non lo è: quattro
+ * ombre ovali sotto quattro chiome che si toccano diventano un punteggiato
+ * scuro fra una chioma e l'altra, e il bosco si legge come una manciata di
+ * cespugli tondi invece che come una volta di rami. L'ombra serve all'albero
+ * isolato in mezzo al prato, che senza galleggia.
+ */
+export const chioma = (v: number, r: number, fitto = false) => {
   const m = r / 10;
   let vicina = 0;
   for (let i = 1; i < MISURE.length; i++) {
     if (Math.abs(MISURE[i] - m) < Math.abs(MISURE[vicina] - m)) vicina = i;
   }
-  return `#a${v}${vicina}`;
+  return `#${fitto ? "b" : "a"}${v}${vicina}`;
 };
 
 /* Gli scogli: otto sassi in tre misure, sparsi lungo la riva con `use`. */
@@ -81,6 +90,12 @@ export function SimboliRipetuti() {
       {CHIOME.map((c) => (
         <g id={c.id} key={c.id}>
           <ellipse cx={c.ombraTerra.cx.toFixed(1)} cy={c.ombraTerra.cy.toFixed(1)} rx={c.ombraTerra.rx.toFixed(1)} ry={c.ombraTerra.ry.toFixed(1)} fill="var(--tav-inchiostro)" opacity="0.18" />
+          <use href={`#${c.id.replace("a", "b")}`} />
+        </g>
+      ))}
+
+      {CHIOME.map((c) => (
+        <g id={c.id.replace("a", "b")} key={c.id}>
           {c.corpo.map((d, k) => (
             <path key={k} d={d} fill="currentColor" />
           ))}
