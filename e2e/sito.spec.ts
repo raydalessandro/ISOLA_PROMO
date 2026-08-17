@@ -170,6 +170,49 @@ test.describe("le superfici del sito", () => {
 });
 
 test.describe("le giornate dell'isola", () => {
+  /*
+   * La lente e' un `<dialog>` vero: il fuoco che resta dentro, Esc e il ritorno
+   * del fuoco sono del browser, non miei. Qui si verifica che ci siano davvero,
+   * perche' e' esattamente il genere di cosa che si crede funzioni e non
+   * funziona.
+   */
+  test("l'ingrandimento si apre, si scorre con le frecce e si chiude con Esc", async ({ page }) => {
+    await page.goto("/giornate");
+
+    // Senza JavaScript il collegamento porta comunque al file grande.
+    const primo = page.locator(".giornata-apri").first();
+    expect(await primo.getAttribute("href")).toMatch(/@2x\.webp$/);
+
+    await page.locator(".giornata-apri").nth(2).click();
+    const lente = page.locator(".lente[open]");
+    await expect(lente).toHaveCount(1);
+    await expect(lente.locator(".lente-conto")).toHaveText("3 di 20");
+
+    await page.keyboard.press("ArrowRight");
+    await expect(lente.locator(".lente-conto")).toHaveText("4 di 20");
+    await page.keyboard.press("ArrowLeft");
+    await page.keyboard.press("ArrowLeft");
+    await expect(lente.locator(".lente-conto")).toHaveText("2 di 20");
+
+    // Il fuoco non deve poter uscire dalla finestra.
+    expect(await page.evaluate(() => document.activeElement?.closest("dialog") !== null)).toBe(true);
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".lente[open]")).toHaveCount(0);
+
+    // E deve tornare da dove si era partiti.
+    expect(await page.evaluate(() => document.activeElement?.className)).toContain("giornata-apri");
+  });
+
+  test("la lente aperta non introduce violazioni di accessibilita'", async ({ page }) => {
+    await page.goto("/giornate");
+    await page.locator(".giornata-apri").first().click();
+    await expect(page.locator(".lente[open]")).toHaveCount(1);
+
+    const esito = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+    expect(esito.violations).toEqual([]);
+  });
+
   test("la galleria mostra tutte e quaranta le illustrazioni, ognuna con la sua didascalia", async ({
     page,
   }) => {

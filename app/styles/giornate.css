@@ -83,3 +83,119 @@
   color: var(--morbido);
   max-width: var(--misura);
 }
+
+/* ---------- la lente ---------- */
+
+/* L'illustrazione e' dentro un collegamento: senza JavaScript porta al file
+   grande, con JavaScript apre la lente. Il blocco serve a togliere lo spazio
+   che l'inline lascerebbe sotto l'immagine. */
+.giornata-apri {
+  display: block;
+}
+
+.giornata-apri:focus-visible {
+  outline: 3px solid var(--inchiostro);
+  outline-offset: -3px;
+}
+
+.lente {
+  background: var(--carta);
+  /* Il foglio di stile del browser centra la finestra modale con margin auto:
+     va riscritto perche' il reset di Next azzera i margini. */
+  margin: auto;
+  border: 1px solid var(--bordo-forte);
+  border-radius: var(--raggio-g);
+  box-shadow: var(--ombra-alta);
+  color: var(--inchiostro);
+  max-height: 92vh;
+  max-width: min(72rem, 94vw);
+  padding: clamp(0.9rem, 2.5vw, 1.4rem);
+  width: max-content;
+}
+
+.lente::backdrop {
+  background: rgba(36, 28, 20, 0.72);
+}
+
+.lente-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.lente-figura img {
+  border-radius: var(--raggio);
+  display: block;
+  height: auto;
+  /* L'illustrazione non deve mai uscire dalla finestra: le quaranta hanno
+     cinque proporzioni diverse, e una 9:16 alta sfonderebbe lo schermo. */
+  max-height: 68vh;
+  object-fit: contain;
+  width: 100%;
+}
+
+.lente-figura figcaption {
+  color: var(--morbido);
+  font-size: 0.92rem;
+  margin-top: 0.6rem;
+  max-width: var(--misura);
+}
+
+.lente-comandi {
+  align-items: center;
+  border-top: 1px solid var(--bordo);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  justify-content: space-between;
+  padding-top: 0.7rem;
+}
+
+.lente-comandi button,
+.lente-chiudi {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo-forte);
+  border-radius: 999px;
+  color: var(--inchiostro);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  padding: 0.45rem 0.95rem;
+}
+
+.lente-comandi button:hover,
+.lente-chiudi:hover {
+  background: var(--carta-scura);
+}
+
+.lente-conto {
+  color: var(--tenue);
+  font-family: var(--sans);
+  font-size: 0.82rem;
+}
+
+.lente-chiudi {
+  align-self: flex-end;
+}
+
+@media (min-width: 46rem) {
+  .lente-corpo {
+    display: grid;
+    grid-template-areas: "figura figura" "comandi chiudi";
+    grid-template-columns: 1fr auto;
+  }
+
+  .lente-figura {
+    grid-area: figura;
+  }
+
+  .lente-comandi {
+    grid-area: comandi;
+  }
+
+  .lente-chiudi {
+    align-self: center;
+    grid-area: chiudi;
+    margin-top: 0.7rem;
+  }
+}

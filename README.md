@@ -148,6 +148,14 @@ colonne CSS e non una griglia: ogni illustrazione tiene le sue proporzioni. Rita
 significherebbe buttare via proprio la fascia alta che l'autrice ha lasciato quieta per il testo
 dei post.
 
+Ogni illustrazione si può ingrandire. La lente è un `<dialog>` nativo: il fuoco che resta dentro,
+la chiusura con Esc, lo sfondo inerte e il ritorno del fuoco all'illustrazione di partenza sono
+comportamenti del browser, non riscritti a mano. Le frecce scorrono dentro il set.
+
+**Senza JavaScript resta una galleria che funziona:** ogni illustrazione è dentro un collegamento
+al file `@2x`, quindi il click porta comunque all'immagine intera. È anche il motivo per cui le
+due larghezze esistono — la lente pesca dalla grande, 1500 px contro 860.
+
 ## Marchio e palette
 
 Il segno della saga è il **rosone dei tre venti** — piuma, onda, foglie intorno a una spirale —
