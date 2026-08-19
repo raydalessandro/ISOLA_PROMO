@@ -7,7 +7,7 @@
  * stesso.
  */
 
-import { caso, fra, macchia } from "@/lib/isola/tratto";
+import { caso, fra, macchia } from "../tratto";
 
 /*
  * Tre chiome per cinque misure: quindici disegni, e in pagina quattrocento

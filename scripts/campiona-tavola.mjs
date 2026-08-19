@@ -20,7 +20,7 @@ import { readFile, writeFile } from "node:fs/promises";
 
 import sharp from "sharp";
 
-const TAVOLA = "lib/isola/tavola.ts";
+const TAVOLA = "isola-mappa/tavola.ts";
 const DIPINTO = "public/media/isola/mappa.webp";
 
 /** Media su un quadratino di sette pixel: un pixel solo sarebbe rumore. */

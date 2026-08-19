@@ -24,11 +24,12 @@
 import {
   Acque, AlberoVecchio, Approdo, Boschi, Carta, Mare, Montagne, OmbraDeiMonti,
   Orti, Prati, Sentieri, Terra, Villaggio,
-} from "@/components/isola/strati";
-import { SimboliRipetuti } from "@/components/isola/simboli";
-import { COSTA_VERA } from "@/lib/isola/geografia";
-import { stileTavola } from "@/lib/isola/tavola";
-import { curva } from "@/lib/isola/tratto";
+} from "./strati";
+import { SimboliRipetuti } from "./simboli";
+import { COSTA_VERA } from "../geografia";
+import { ISOLA_INTERA, type Inquadratura, riquadro } from "../quartieri";
+import { stileTavola } from "../tavola";
+import { curva } from "../tratto";
 
 function Definizioni() {
   return (
@@ -115,33 +116,41 @@ function Definizioni() {
   );
 }
 
-/** La descrizione che leggono lo screen reader e chi non carica il disegno. */
-export const DESCRIZIONE_ISOLA =
-  "Mappa disegnata dell'isola vista dall'alto: le Montagne Gemelle a nord, i " +
-  "Pascoli Alti con la pozza e le capanne dei pastori, l'anello del Fiume che " +
-  "Gira chiuso attorno al villaggio con l'Albero Vecchio, la Foresta " +
-  "Intrecciata e gli Orti del Cerchio a ovest, il quartiere di Fuoco col camino " +
-  "del forno a est, e a sud la spiaggia con il pontile, dove il fiume incontra " +
-  "il mare.";
+/**
+ * La descrizione che leggono lo screen reader e chi non carica il disegno.
+ *
+ * Non è una didascalia poetica: elenca quello che nel riquadro si vede davvero,
+ * e cambia col riquadro — di un quartiere si descrive quel quartiere, non tutta
+ * l'isola.
+ */
+export const descrizione = (vista: Inquadratura = ISOLA_INTERA) =>
+  vista.id === ISOLA_INTERA.id
+    ? `Mappa disegnata dell'isola vista dall'alto: ${vista.cosa}.`
+    : `Dettaglio della mappa disegnata dell'isola: ${vista.cosa}.`;
 
 /**
- * Il disegno intero, pronto da servire.
+ * Il disegno, pronto da servire.
  *
- * Non finisce dentro la pagina: lo serve `/isola.svg` come immagine a sé, che
- * il browser mette in cache una volta e riusa. Per questo si porta dentro la
- * tavolozza in un `<style>` — un'immagine non legge il CSS di chi la mostra — e
- * per questo dichiara `xmlns`: fuori da un documento HTML serve.
+ * Non è pensato per finire dentro una pagina: è un'immagine, e si serve come
+ * tale — il markup è fatto di migliaia di forme, e messo in linea in un
+ * documento React finirebbe scritto due volte. Per questo si porta dentro la
+ * tavolozza in un `<style>` e dichiara `xmlns`: fuori da un documento HTML
+ * servono.
+ *
+ * `vista` decide che pezzo di foglio si guarda. Il disegno resta lo stesso —
+ * cambia solo il riquadro, quindi le coordinate non si spostano mai e chi ci
+ * mette dei segni sopra non ha niente da ricalcolare.
  */
-export function IsolaDisegnata() {
+export function IsolaDisegnata({ vista = ISOLA_INTERA }: { vista?: Inquadratura }) {
   return (
     <svg
       className="isola-disegnata"
-      viewBox="0 0 1000 1500"
+      viewBox={riquadro(vista)}
       role="img"
-      aria-label={DESCRIZIONE_ISOLA}
+      aria-label={descrizione(vista)}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <title>{DESCRIZIONE_ISOLA}</title>
+      <title>{descrizione(vista)}</title>
       <style>{stileTavola()}</style>
 
       <Definizioni />
@@ -153,18 +162,18 @@ export function IsolaDisegnata() {
        * terreno invece di stargli appoggiato. L'ombra che gettano torna dopo,
        * quando il prato è già steso.
        */}
-      <Mare />
-      <Terra />
-      <Montagne />
-      <Prati />
-      <OmbraDeiMonti />
+      <Mare vista={vista} />
+      <Terra vista={vista} />
+      <Montagne vista={vista} />
+      <Prati vista={vista} />
+      <OmbraDeiMonti vista={vista} />
       <Acque />
-      <Boschi />
-      <Orti />
+      <Boschi vista={vista} />
+      <Orti vista={vista} />
       <Sentieri />
-      <Villaggio />
-      <AlberoVecchio />
-      <Approdo />
+      <Villaggio vista={vista} />
+      <AlberoVecchio vista={vista} />
+      <Approdo vista={vista} />
       <Carta />
     </svg>
   );

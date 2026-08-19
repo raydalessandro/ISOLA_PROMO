@@ -13,7 +13,7 @@
  * Alzare VERSION invalida tutte le cache precedenti.
  */
 
-const VERSION = "isola-v3";
+const VERSION = "isola-v4";
 const SHELL_CACHE = `${VERSION}-shell`;
 const ASSET_CACHE = `${VERSION}-assets`;
 
@@ -36,11 +36,12 @@ const PRECACHE = [
  * cercarle. Precaricarle nella shell non servirebbe a niente — le si
  * scaricherebbe due volte e offline non si troverebbero lo stesso.
  *
- * `/isola.svg` è il disegno della mappa: è la mappa stessa, non un ornamento,
- * e senza, /mappa senza rete mostrerebbe una cornice vuota.
+ * `/isola/intera.svg` è il disegno della mappa: è la mappa stessa, non un
+ * ornamento, e senza, /mappa senza rete mostrerebbe una cornice vuota. I
+ * quartieri no: si prendono quando ci si va.
  */
 const PRECACHE_RISORSE = [
-  "/isola.svg",
+  "/isola/intera.svg",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/maskable-512.png",
@@ -92,7 +93,7 @@ const isImmutableAsset = (url) =>
 const isImage = (request, url) =>
   request.destination === "image" ||
   url.pathname.startsWith("/media/") ||
-  url.pathname === "/isola.svg";
+  url.pathname.startsWith("/isola/");
 
 /*
  * Le immagini passano da /_next/image con una query diversa per ogni larghezza:

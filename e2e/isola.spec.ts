@@ -15,7 +15,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("l'isola disegnata", () => {
   test("è un vettoriale servito a parte, con la sua tavolozza dentro", async ({ request }) => {
-    const risposta = await request.get("/isola.svg");
+    const risposta = await request.get("/isola/intera.svg");
     expect(risposta.ok()).toBe(true);
     expect(risposta.headers()["content-type"]).toContain("image/svg+xml");
 
@@ -33,7 +33,7 @@ test.describe("l'isola disegnata", () => {
   });
 
   test("pesa meno della tavola dipinta che ha sostituito", async ({ request }) => {
-    const svg = await (await request.get("/isola.svg")).text();
+    const svg = await (await request.get("/isola/intera.svg")).text();
     const dipinta = (await (await request.get("/media/isola/mappa.webp")).body()).byteLength;
 
     /*
@@ -51,7 +51,7 @@ test.describe("l'isola disegnata", () => {
     await page.goto("/mappa");
 
     const disegno = page.locator(".mappa-interattiva img");
-    await expect(disegno).toHaveAttribute("src", /isola\.svg/);
+    await expect(disegno).toHaveAttribute("src", /isola\/intera\.svg/);
 
     // Un'immagine rotta passerebbe inosservata: si chiede al browser se l'ha
     // davvero decodificata.

@@ -19,12 +19,42 @@ import {
   FORNO, FUOCO, MASSICCIO, ORTI, PASCOLI_ALTI, PONTE, PONTILE, POZZA,
   PRATO_ANELLO, PRATO_SUD_EST, PRATO_SUD_OVEST, SECCA_LARGA, SECCA_STRETTA,
   SELLA, SENTIERI, SPIAGGIA, type Casa,
-} from "@/lib/isola/geografia";
-import { chioma, sasso } from "@/components/isola/simboli";
+} from "../geografia";
+import { chioma, sasso } from "./simboli";
+import { type Inquadratura } from "../quartieri";
 import {
   attornoAlCentro, caso, curva, dentro, fra, frastaglia, lungo, macchia, nastro,
   type P, scegli, semina, verso,
-} from "@/lib/isola/tratto";
+} from "../tratto";
+
+/**
+ * Ogni strato sa che pezzo di foglio si sta guardando.
+ *
+ * Non è per disegnare diverso: è per non disegnare quello che non si vede. Il
+ * riquadro di un quartiere è un sesto del foglio, e i cinquecento alberi che
+ * cadono fuori peserebbero lo stesso nel file. Le forme grandi — la costa, il
+ * massiccio, il fiume — restano intere: sono poche, e tagliarle a metà
+ * costerebbe più di quanto risparmi.
+ */
+export type Strato = { vista: Inquadratura };
+
+/** Se un punto cade nel riquadro, col margine di chi sporge da fuori. */
+const inVista = (v: Inquadratura, x: number, y: number, margine = 70) =>
+  x >= v.x - margine &&
+  x <= v.x + v.larghezza + margine &&
+  y >= v.y - margine &&
+  y <= v.y + v.altezza + margine;
+
+/**
+ * Se una cosa grande tocca il riquadro.
+ *
+ * Vale per quello che si disegna in blocco — l'Albero Vecchio, gli Orti, le
+ * Montagne, il pontile: o ci sta dentro o non si disegna affatto. Guardando il
+ * quartiere d'Acqua, la chioma dell'Albero sarebbe sessanta macchie a nord del
+ * riquadro, invisibili e pesanti come se si vedessero.
+ */
+const tocca = (v: Inquadratura, x: number, y: number, larghezza: number, altezza: number) =>
+  x < v.x + v.larghezza && x + larghezza > v.x && y < v.y + v.altezza && y + altezza > v.y;
 
 /* ---------- il mare ---------- */
 
@@ -45,6 +75,8 @@ const CHIAZZE = (() => {
   return semina([[0, 0], [1000, 0], [1000, 1500], [0, 1500]], 26, rnd, { distanza: 150 })
     .filter((p) => !dentro(larga, p))
     .map((p) => ({
+      x: p[0],
+      y: p[1],
       d: macchia(p[0], p[1], fra(rnd, 60, 150), rnd, { punte: 9, irregolare: 0.5 }),
       chiara: rnd() > 0.45,
       o: fra(rnd, 0.08, 0.2),
@@ -59,7 +91,7 @@ const SCOGLI_AL_LARGO: { x: number; y: number; v: number; r: number }[] = [
   { x: 70, y: 972, v: 2, r: 5 }, { x: 934, y: 474, v: 5, r: 5 },
 ];
 
-export function Mare() {
+export function Mare({ vista }: Strato) {
   return (
     <g>
       <rect x="-20" y="-20" width="1040" height="1540" fill="url(#g-mare)" />
@@ -67,7 +99,7 @@ export function Mare() {
       {/* Le chiazze dell'acquerello: il mare della tavola non è mai di un colore
           solo, ha i fondali che si vedono attraverso. */}
       <g filter="url(#f-sfoca)">
-        {CHIAZZE.map((c, i) => (
+        {CHIAZZE.filter((c) => inVista(vista, c.x, c.y, 220)).map((c, i) => (
           <path key={i} d={c.d} fill={c.chiara ? "var(--tav-mare-chiaro)" : "var(--tav-mare-fondo)"} opacity={c.o.toFixed(2)} />
         ))}
       </g>
@@ -83,7 +115,7 @@ export function Mare() {
       <use href="#p-costa" transform={attornoAlCentro(COSTA_VERA, SECCA_STRETTA)} fill="var(--tav-secca)" opacity="0.6" filter="url(#f-acquerello)" />
 
       <g stroke="var(--tav-schiuma)" fill="none" strokeLinecap="round" strokeWidth="2">
-        {ONDE.map(({ p, l, o }, i) => (
+        {ONDE.filter(({ p }) => inVista(vista, p[0], p[1])).map(({ p, l, o }, i) => (
           <path key={i} d={`M${p[0]} ${p[1]}q${l / 2} -3.2 ${l} 0`} opacity={o.toFixed(1)} />
         ))}
       </g>
@@ -104,7 +136,7 @@ export function Mare() {
        * finirebbe da un'altra parte invece che più grande dov'è.
        */}
       <g>
-        {SCOGLI_AL_LARGO.map((s, i) => (
+        {SCOGLI_AL_LARGO.filter((s) => inVista(vista, s.x, s.y)).map((s, i) => (
           <g key={i}>
             <use href={sasso(s.v, s.r * 1.7)} x={s.x} y={s.y} fill="var(--tav-schiuma)" opacity="0.4" filter="url(#f-sfoca-corta)" />
             <use href={sasso(s.v, s.r)} x={s.x} y={s.y} fill="var(--tav-roccia-ombra)" opacity="0.9" />
@@ -138,7 +170,7 @@ const SCOGLI = (() => {
   return pezzi;
 })();
 
-export function Terra() {
+export function Terra({ vista }: Strato) {
   return (
     <g>
       {/* Prima la scogliera, poi la terra dentro: il ciglio è quello che avanza
@@ -147,7 +179,7 @@ export function Terra() {
       <use href="#p-costa" transform={attornoAlCentro(COSTA_VERA, CIGLIO)} fill="url(#g-terra)" filter="url(#f-acquerello)" />
 
       <g clipPath="url(#c-isola)">
-        {SCOGLI.map((s, i) => (
+        {SCOGLI.filter((s) => inVista(vista, s.x, s.y)).map((s, i) => (
           <use
             key={i}
             href={sasso(s.v, s.r)}
@@ -173,10 +205,14 @@ const CIUFFI = (() => {
   const rnd = caso(6161);
   const campi = [PASCOLI_ALTI, PRATO_ANELLO, PRATO_SUD_OVEST, PRATO_SUD_EST];
   return campi.flatMap((campo) =>
-    semina(campo, 190, rnd, { distanza: 15 }).map(([x, y]) => {
+    semina(campo, 120, rnd, { distanza: 20 }).map(([x, y]) => {
       const h = fra(rnd, 3.4, 7);
       const p = fra(rnd, -2.4, 2.4);
-      return `M${Math.round(x)} ${Math.round(y)}q${p.toFixed(1)} ${(-h / 2).toFixed(1)} ${(p * 1.3).toFixed(1)} ${(-h).toFixed(1)}`;
+      return {
+        x,
+        y,
+        d: `M${Math.round(x)} ${Math.round(y)}q${p.toFixed(1)} ${(-h / 2).toFixed(1)} ${(p * 1.3).toFixed(1)} ${(-h).toFixed(1)}`,
+      };
     }),
   );
 })();
@@ -190,7 +226,7 @@ const MURETTI: P[][] = [
   [[860, 1130], [820, 1188], [768, 1224]],
 ];
 
-export function Prati() {
+export function Prati({ vista }: Strato) {
   const campi: { forma: P[]; colore: string; opacità: number }[] = [
     { forma: PASCOLI_ALTI, colore: "var(--tav-prato)", opacità: 0.95 },
     { forma: PRATO_ANELLO, colore: "var(--tav-prato-chiaro)", opacità: 0.95 },
@@ -220,7 +256,7 @@ export function Prati() {
       </g>
 
       <g stroke="var(--tav-bosco)" fill="none" strokeWidth="1.5" strokeLinecap="round" opacity="0.3">
-        {CIUFFI.map((d, i) => (
+        {CIUFFI.filter((c) => inVista(vista, c.x, c.y)).map(({ d }, i) => (
           <path key={i} d={d} />
         ))}
       </g>
@@ -371,7 +407,9 @@ const RILIEVO = (() => {
 
 /** L'ombra che il massiccio getta sul pascolo, verso levante. Si disegna dopo i
     prati, altrimenti il prato ci passa sopra e la montagna torna a galleggiare. */
-export function OmbraDeiMonti() {
+export function OmbraDeiMonti({ vista }: Strato) {
+  if (!tocca(vista, 150, 0, 720, 400)) return null;
+
   return (
     <path
       d={curva(RILIEVO.bassa)}
@@ -383,7 +421,11 @@ export function OmbraDeiMonti() {
   );
 }
 
-export function Montagne() {
+export function Montagne({ vista }: Strato) {
+  /* Il massiccio sta tutto nella metà alta del foglio: fuori di lì non c'è
+     roccia da disegnare. */
+  if (!tocca(vista, 150, 0, 720, 400)) return null;
+
   return (
     <g>
       <path d={curva(RILIEVO.alta)} fill="url(#g-roccia)" filter="url(#f-acquerello)" />
@@ -535,21 +577,26 @@ const RIVE = perTono(
 );
 
 /** Un gruppo di alberi per tono: un `use` a testa, nient'altro. */
-function Piante({ campi }: { campi: [string, Pianta[]][] }) {
+function Piante({ campi, vista }: { campi: [string, Pianta[]][]; vista: Inquadratura }) {
   return (
     <>
-      {campi.map(([tono, piante]) => (
-        <g color={tono} key={tono}>
-          {piante.map((a, k) => (
-            <use key={k} href={a.href} x={a.x} y={a.y} />
-          ))}
-        </g>
-      ))}
+      {campi.map(([tono, piante]) => {
+        const dentro = piante.filter((a) => inVista(vista, a.x, a.y));
+        if (dentro.length === 0) return null;
+
+        return (
+          <g color={tono} key={tono}>
+            {dentro.map((a, k) => (
+              <use key={k} href={a.href} x={a.x} y={a.y} />
+            ))}
+          </g>
+        );
+      })}
     </>
   );
 }
 
-export function Boschi() {
+export function Boschi({ vista }: Strato) {
   return (
     <g>
       {/* Sotto la Foresta Intrecciata il terreno è più scuro di quello intorno:
@@ -557,13 +604,13 @@ export function Boschi() {
       <path d={curva(frastaglia(FORESTA, caso(11), 14))} fill="var(--tav-bosco)" opacity="0.9" filter="url(#f-acquerello)" />
       <path d={curva(frastaglia(verso(FORESTA, 0.86), caso(12), 12))} fill="var(--tav-bosco-ombra)" opacity="0.45" filter="url(#f-acquerello)" />
 
-      <Piante campi={ALBERI} />
+      <Piante campi={ALBERI} vista={vista} />
 
-      <Piante campi={FASCIA_COSTIERA} />
-      <Piante campi={RIVE} />
+      <Piante campi={FASCIA_COSTIERA} vista={vista} />
+      <Piante campi={RIVE} vista={vista} />
 
       <g color="var(--tav-bosco-ombra)">
-        {CIPRESSI.map(([x, y], i) => (
+        {CIPRESSI.filter(([x, y]) => inVista(vista, x, y)).map(([x, y], i) => (
           <use key={i} href="#cipresso" transform={`translate(${x} ${y}) scale(${(0.85 + (i % 3) * 0.12).toFixed(2)})`} />
         ))}
       </g>
@@ -605,7 +652,11 @@ const COLTURE = (() => {
   return file;
 })();
 
-export function Orti() {
+export function Orti({ vista }: Strato) {
+  if (!tocca(vista, ORTI.cx - ORTI.rx - 30, ORTI.cy - ORTI.ry - 30, (ORTI.rx + 30) * 2, (ORTI.ry + 30) * 2)) {
+    return null;
+  }
+
   return (
     <g>
       {/* La radura: gli orti stanno in un'apertura del bosco, non sul bosco. */}
@@ -707,7 +758,7 @@ function Capanna({ x, y, s, r }: Casa) {
   );
 }
 
-export function Villaggio() {
+export function Villaggio({ vista }: Strato) {
   return (
     <g>
       {/* La piazza: terra battuta sotto l'Albero, dove sta il mercato. */}
@@ -718,16 +769,16 @@ export function Villaggio() {
         filter="url(#f-acquerello)"
       />
 
-      {CASE_VILLAGGIO.map((c, i) => (
+      {CASE_VILLAGGIO.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
         <Casetta key={`v${i}`} {...c} />
       ))}
-      {CASE_FUOCO.map((c, i) => (
+      {CASE_FUOCO.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
         <Casetta key={`f${i}`} {...c} />
       ))}
-      {CAPANNE_SPIAGGIA.map((c, i) => (
+      {CAPANNE_SPIAGGIA.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
         <Casetta key={`s${i}`} {...c} />
       ))}
-      {CAPANNE_PASTORI.map((c, i) => (
+      {CAPANNE_PASTORI.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
         <Capanna key={`p${i}`} {...c} />
       ))}
 
@@ -789,7 +840,7 @@ const CHIOMA = (() => {
     });
   });
 
-  const ciuffi = Array.from({ length: 34 }, (_, i) => {
+  const ciuffi = Array.from({ length: 34 }, () => {
     const a = fra(rnd, 0, Math.PI * 2);
     const d = raggio * Math.sqrt(fra(rnd, 0, 0.78));
     const x = cx + Math.cos(a) * d;
@@ -808,8 +859,10 @@ const CHIOMA = (() => {
 
 const VERDE = ["var(--tav-bosco-ombra)", "var(--tav-bosco)", "var(--tav-bosco-luce)"];
 
-export function AlberoVecchio() {
+export function AlberoVecchio({ vista }: Strato) {
   const { cx, cy, raggio, tronco } = ALBERO_VECCHIO;
+
+  if (!tocca(vista, cx - raggio, cy - raggio, raggio * 2, tronco[1] - cy + raggio)) return null;
 
   return (
     <g>
@@ -869,13 +922,15 @@ const CONCHIGLIE = (() => {
   }));
 })();
 
-export function Approdo() {
+export function Approdo({ vista }: Strato) {
   const assi = Array.from({ length: 9 }, (_, i) => i / 8);
+
+  if (!tocca(vista, 380, 1220, 420, 260)) return null;
 
   return (
     <g>
       <g>
-        {CONCHIGLIE.map((c, i) => (
+        {CONCHIGLIE.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
           <g key={i}>
             <ellipse cx={c.x} cy={c.y} rx={c.r.toFixed(1)} ry={(c.r * 0.72).toFixed(1)} fill="var(--tav-schiuma)" opacity="0.85" />
             {c.aperta && (

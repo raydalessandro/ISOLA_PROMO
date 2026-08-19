@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { DESCRIZIONE_ISOLA } from "@/components/isola/isola-disegnata";
+import { descrizione } from "@/isola-mappa";
 import { getStoria, personaggi } from "@/lib/canone";
 import { storiePerLuogo } from "@/lib/legami";
 import { COLORI_QUARTIERE, nomeQuartiere } from "@/lib/dove";
@@ -9,7 +9,7 @@ import { segniConLuogo } from "@/lib/mappa-posizioni";
 /*
  * La mappa dell'isola con i luoghi da visitare.
  *
- * La base è l'isola disegnata (`components/isola/`), un vettoriale che ricalca
+ * La base è l'isola disegnata (`isola-mappa/`), un vettoriale che ricalca
  * la tavola dipinta: stessa geografia, stesso riquadro 1000×1500, quindi le
  * coordinate lette sul disegno cadono dove devono senza aggiustamenti. I segni
  * le stanno sopra, in uno strato SVG che condivide quel riquadro.
@@ -42,12 +42,12 @@ export function MappaIsola() {
   return (
     <>
       <figure className="mappa-interattiva">
-        {/* Il disegno arriva da `/isola.svg`, non dal markup di questa pagina:
+        {/* Il disegno arriva da `/isola/intera.svg`, non dal markup di questa pagina:
             è un'immagine come lo era la tavola, ma vettoriale — un decimo del
             peso, e nitida a qualunque ingrandimento. */}
         <Image
-          src="/isola.svg"
-          alt={DESCRIZIONE_ISOLA}
+          src="/isola/intera.svg"
+          alt={descrizione()}
           width={1000}
           height={1500}
           priority

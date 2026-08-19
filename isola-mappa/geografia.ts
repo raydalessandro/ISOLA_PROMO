@@ -20,7 +20,7 @@
  * `lib/mappa-posizioni.ts`, che pesca i luoghi veri da `lib/legami.ts`.
  */
 
-import { caso, frastaglia, type P } from "@/lib/isola/tratto";
+import { caso, frastaglia, type P } from "./tratto";
 
 /** Il foglio: la tavola è 2:3, e il riquadro del disegno la ricalca. */
 export const FOGLIO = { larghezza: 1000, altezza: 1500 };
