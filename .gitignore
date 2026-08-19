@@ -13,3 +13,10 @@ out/
 /playwright-report
 /blob-report
 /playwright/.cache
+
+# Anteprime e prove del disegno: si rigenerano, non si versionano.
+/.ante
+/.ante*.mjs
+/.anteprime
+/.sagome*
+/.pagina.mjs
