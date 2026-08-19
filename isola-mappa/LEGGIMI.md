@@ -18,9 +18,22 @@ import { IsolaDisegnata, descrizione, inquadratura } from "./isola-mappa";
 // l'isola intera
 <IsolaDisegnata />
 
-// un quartiere
-<IsolaDisegnata vista={inquadratura("fuoco")} />
+// un quartiere, col dettaglio da vicino e chi ci sta di casa
+<IsolaDisegnata
+  vista={inquadratura("fuoco")}
+  figure={[{ x: 780, y: 686, sagoma: "volpe", verso: -1 }]}
+/>
 ```
+
+Il **dettaglio** si accende da solo quando l'inquadratura non è l'isola intera, e
+si può forzare con `dettaglio`. Cambia parecchio: da vicino le case prendono
+tegole e finestre, l'erba si infittisce, il mercato apre sulla piazza, il fiume
+si increspa, gli alberi tirano fuori il tronco e gli abitanti entrano in scena.
+Da lontano niente di tutto questo si disegna — non per pigrizia, ma perché alla
+scala del foglio sarebbe sporco, e peserebbe come le cose che si vedono.
+
+Le **figure** sono profili di animali, non ritratti, e arrivano già collocate da
+chi conosce il canone: `isola-mappa` sa disegnare una volpe, non sa chi sia.
 
 `IsolaDisegnata` restituisce un `<svg>` completo — tavolozza inclusa, in un
 `<style>` che viaggia dentro il disegno. È fatto per essere **servito come
@@ -45,6 +58,7 @@ Solo quello che sta in `index.ts`:
 |---|---|
 | `IsolaDisegnata` | il disegno, per un'inquadratura |
 | `descrizione` | il testo alternativo di quell'inquadratura |
+| `Figura`, `NomeSagoma` | le figure degli abitanti: dove stanno e che animale sono |
 | `QUARTIERI`, `ISOLA_INTERA`, `inquadratura` | i riquadri: l'isola intera e i cinque pezzi |
 | `camera` | quanto ingrandire e dove puntare, per chi inquadra un quartiere con una trasformazione invece che con un'altra immagine |
 | `riquadro` | l'attributo `viewBox` di un'inquadratura |
@@ -58,11 +72,14 @@ Il resto è interno e cambia quando cambia il disegno.
 | File | Cosa contiene |
 |---|---|
 | `tratto.ts` | la matita: caso governato, curve morbide, semine dentro una forma, nastri |
+| `vita.ts` | quello che si muove: nuvole, fumo, luccichio, corrente |
 | `geografia.ts` | dove stanno le cose, letto sulla tavola dipinta con una griglia sovrapposta |
 | `quartieri.ts` | i riquadri dei quartieri e il conto della camera |
 | `tavola.ts` | i colori, campionati dalla tavola, con la coordinata del prelievo |
 | `disegno/simboli.tsx` | quello che si ripete: chiome e sassi, in cinque misure |
 | `disegno/strati.tsx` | gli strati, dal mare alla grana della carta |
+| `disegno/dettagli.tsx` | quello che si vede solo da vicino: mercato, erba fitta, legna, reti |
+| `disegno/figure.tsx` | le sagome degli abitanti |
 | `disegno/isola.tsx` | le definizioni SVG e l'ordine in cui gli strati si sovrappongono |
 
 ## Le tre regole di chi ci mette mano
@@ -78,7 +95,13 @@ Il resto è interno e cambia quando cambia il disegno.
    (`scripts/campiona-tavola.mjs`): chi porta via questa cartella si porti via
    anche quello, o la provenienza resta una buona intenzione.
 
-3. **Le coordinate sono un patto.** Il foglio è 1000×1500 e non si tocca: chi
+3. **Quello che si muove sta dentro l'immagine.** Le animazioni vivono in un
+   `<style>` nell'SVG, non in un foglio di stile di fuori: il disegno si serve
+   come immagine, e un'immagine non legge il CSS di chi la mostra né può
+   chiedere JavaScript. Dentro c'è anche la media query di chi ha chiesto di non
+   vedere animazioni — non è una cortesia, è la regola.
+
+4. **Le coordinate sono un patto.** Il foglio è 1000×1500 e non si tocca: chi
    mette dei segni sopra la mappa — etichette, luoghi cliccabili, figure — li
    piazza in quelle unità. Cambiare il foglio significa spostare tutto quello
    che qualcun altro ci ha appoggiato sopra.

@@ -112,13 +112,18 @@
 
 /* Il cerchio si ingrossa appena al passaggio e alla messa a fuoco: cambia lo
    spessore del tratto, non il raggio, così non si muove niente intorno. */
+/* I segni non crescono con l'ingrandimento: la mappa si avvicina, il segno
+   resta della sua misura. Senza questo, a due volte e mezzo un pallino diventa
+   un piatto e l'etichetta non ci sta piu' nel riquadro. */
 .mappa-segno circle {
+  r: calc(10px / var(--zoom, 1));
+  stroke-width: calc(4px / var(--zoom, 1));
   transition: stroke-width 140ms ease-out;
 }
 
 .mappa-segno:hover circle,
 .mappa-segno:focus-visible circle {
-  stroke-width: 6;
+  stroke-width: calc(6px / var(--zoom, 1));
 }
 
 .mappa-segno:focus {
@@ -136,12 +141,12 @@
 .mappa-etichetta {
   fill: var(--inchiostro);
   font-family: var(--sans);
-  font-size: 15px;
+  font-size: calc(15px / var(--zoom, 1));
   font-weight: 700;
   paint-order: stroke fill;
   stroke: var(--carta);
   stroke-linejoin: round;
-  stroke-width: 4px;
+  stroke-width: calc(4px / var(--zoom, 1));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -249,4 +254,129 @@
   font-size: 0.86rem;
   margin-top: 0.5rem;
   text-align: center;
+}
+
+/* ---------- la camera sui quartieri ---------- */
+
+/*
+ * La cornice sta ferma e la scena si muove dentro. L'immagine e' quella
+ * dell'isola intera, gia' in cache: ingrandirla non costa una richiesta, e il
+ * dettaglio vero — chi ci sta di casa, il mercato, le reti — sta nella pagina
+ * del quartiere, che si apre da qui.
+ */
+.mappa-quartieri {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-bottom: 0.9rem;
+}
+
+.mappa-chip {
+  background: var(--carta-alta);
+  border: 1px solid var(--bordo-forte);
+  border-radius: 999px;
+  color: var(--morbido);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.34rem 0.9rem;
+  text-decoration: none;
+  transition: background 140ms ease-out, color 140ms ease-out;
+}
+
+.mappa-chip:hover {
+  background: var(--carta-scura);
+  color: var(--inchiostro);
+}
+
+.mappa-chip--attivo,
+.mappa-chip--attivo:hover {
+  background: var(--inchiostro);
+  border-color: var(--inchiostro);
+  color: var(--carta);
+}
+
+.mappa-chip--via {
+  border-style: dashed;
+}
+
+.mappa-quadro {
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio-g);
+  overflow: hidden;
+}
+
+.mappa-scena {
+  position: relative;
+  transform-origin: 50% 50%;
+  transition: transform 640ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+.mappa-quadro img {
+  border: none;
+  border-radius: 0;
+}
+
+.mappa-invito {
+  color: var(--tenue);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  margin-top: 0.7rem;
+  text-align: center;
+}
+
+.mappa-invito a {
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mappa-scena {
+    transition: none;
+  }
+}
+
+/* ---------- la pagina di un quartiere ---------- */
+
+.quartiere-abitanti {
+  margin-top: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.quartiere-abitanti h2 {
+  font-size: 1.25rem;
+}
+
+.quartiere-abitanti ul {
+  list-style: none;
+  margin-top: 0.7rem;
+  padding: 0;
+}
+
+.quartiere-abitanti li {
+  border-left: 3px solid var(--bordo-forte);
+  margin-top: 0.5rem;
+  padding-left: 0.8rem;
+}
+
+.quartiere-nota {
+  color: var(--tenue);
+  font-size: 0.88rem;
+  margin-top: 0.9rem;
+}
+
+.quartiere-giro {
+  border-top: 1px solid var(--bordo);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  justify-content: center;
+  margin-top: clamp(2rem, 5vw, 3rem);
+  padding-top: 1.2rem;
+}
+
+.quartiere-giro a {
+  font-family: var(--sans);
+  font-size: 0.9rem;
 }

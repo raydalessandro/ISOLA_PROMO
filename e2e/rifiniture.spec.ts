@@ -1,6 +1,21 @@
 import { expect, test } from "@playwright/test";
 
-const SUPERFICI = ["/", "/mondo", "/storie", "/libro", "/giornate", "/mappa", "/gioco"];
+const SUPERFICI = [
+  "/",
+  "/mondo",
+  "/storie",
+  "/libro",
+  "/giornate",
+  "/mappa",
+  /* Un indirizzo per quartiere: la mappa da vicino non è uno stato di /mappa,
+     è una pagina che si linka e si indicizza. */
+  "/mappa/aria",
+  "/mappa/fuoco",
+  "/mappa/acqua",
+  "/mappa/terra",
+  "/mappa/villaggio",
+  "/gioco",
+];
 
 test.describe("quello che leggono i motori di ricerca", () => {
   /*

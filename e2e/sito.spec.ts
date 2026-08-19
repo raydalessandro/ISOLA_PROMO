@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const SUPERFICI = ["/", "/mondo", "/giornate", "/storie", "/mappa", "/libro"];
+const SUPERFICI = ["/", "/mondo", "/giornate", "/storie", "/mappa", "/mappa/fuoco", "/libro"];
 
 test.describe("le superfici del sito", () => {
   test("l'apertura racconta l'isola e i tre venti", async ({ page }) => {

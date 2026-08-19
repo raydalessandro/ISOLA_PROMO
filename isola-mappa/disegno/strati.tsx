@@ -20,8 +20,9 @@ import {
   PRATO_ANELLO, PRATO_SUD_EST, PRATO_SUD_OVEST, SECCA_LARGA, SECCA_STRETTA,
   SELLA, SENTIERI, SPIAGGIA, type Casa,
 } from "../geografia";
-import { chioma, sasso } from "./simboli";
+import { chioma, famiglia, sasso } from "./simboli";
 import { type Inquadratura } from "../quartieri";
+import { ONDATE } from "../vita";
 import {
   attornoAlCentro, caso, curva, dentro, fra, frastaglia, lungo, macchia, nastro,
   type P, scegli, semina, verso,
@@ -36,7 +37,18 @@ import {
  * massiccio, il fiume — restano intere: sono poche, e tagliarle a metà
  * costerebbe più di quanto risparmi.
  */
-export type Strato = { vista: Inquadratura };
+export type Strato = {
+  vista: Inquadratura;
+  /**
+   * Se si sta guardando da vicino.
+   *
+   * Da lontano il dettaglio è rumore: una finestra larga due unità su un foglio
+   * da mille diventa una macchia sporca sul muro. Da vicino è il contrario — è
+   * quello che distingue una casa da un triangolo su un rettangolo. Quindi non
+   * si disegna sempre tutto: si disegna quello che a quella distanza si vede.
+   */
+  dettaglio: boolean;
+};
 
 /** Se un punto cade nel riquadro, col margine di chi sporge da fuori. */
 const inVista = (v: Inquadratura, x: number, y: number, margine = 70) =>
@@ -114,11 +126,25 @@ export function Mare({ vista }: Strato) {
       <use href="#p-costa" transform={attornoAlCentro(COSTA_VERA, SECCA_LARGA)} fill="var(--tav-mare-chiaro)" opacity="0.55" filter="url(#f-acquerello)" />
       <use href="#p-costa" transform={attornoAlCentro(COSTA_VERA, SECCA_STRETTA)} fill="var(--tav-secca)" opacity="0.6" filter="url(#f-acquerello)" />
 
-      <g stroke="var(--tav-schiuma)" fill="none" strokeLinecap="round" strokeWidth="2">
-        {ONDE.filter(({ p }) => inVista(vista, p[0], p[1])).map(({ p, l, o }, i) => (
-          <path key={i} d={`M${p[0]} ${p[1]}q${l / 2} -3.2 ${l} 0`} opacity={o.toFixed(1)} />
-        ))}
-      </g>
+      {/* Le onde luccicano a gruppi sfasati: tutte insieme sarebbe un battito,
+          e un battito su un mare si vede subito che è finto. */}
+      {Array.from({ length: ONDATE }, (_, gruppo) => (
+        <g
+          key={gruppo}
+          className="onde"
+          style={{ animationDelay: `${gruppo * 2.3}s` }}
+          stroke="var(--tav-schiuma)"
+          fill="none"
+          strokeLinecap="round"
+          strokeWidth="2"
+        >
+          {ONDE.filter((o, i) => i % ONDATE === gruppo && inVista(vista, o.p[0], o.p[1])).map(
+            ({ p, l, o }, i) => (
+              <path key={i} d={`M${p[0]} ${p[1]}q${l / 2} -3.2 ${l} 0`} opacity={o.toFixed(1)} />
+            ),
+          )}
+        </g>
+      ))}
 
       <use
         href="#p-costa"
@@ -276,22 +302,45 @@ export function Prati({ vista }: Strato) {
 /* ---------- le acque dolci ---------- */
 
 /** Un braccio del fiume: il letto scuro, l'acqua, il riflesso. */
-function Braccio({ punti, larghezza }: { punti: P[]; larghezza: number }) {
+function Braccio({ punti, larghezza, dettaglio }: { punti: P[]; larghezza: number; dettaglio: boolean }) {
   const d = curva(frastaglia(punti, caso(punti[3][0] | 0), 3.5, false, 1), false);
   return (
     <g fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path d={d} stroke="var(--tav-fiume-riva)" strokeWidth={larghezza + 16} opacity="0.75" />
       <path d={d} stroke="url(#g-fiume)" strokeWidth={larghezza} />
       <path d={d} stroke="var(--tav-fiume-chiaro)" strokeWidth={larghezza * 0.3} opacity="0.7" />
+      {/* Da vicino l'acqua si muove: due file di increspature che corrono col
+          filo della corrente, una per riva. */}
+      {dettaglio && (
+        <>
+          <path
+            className="corrente"
+            d={d}
+            stroke="var(--tav-fiume-chiaro)"
+            strokeWidth={larghezza * 0.34}
+            opacity="0.35"
+            strokeDasharray="6 20"
+          />
+          <path
+            d={d}
+            stroke="var(--tav-fiume-riva)"
+            strokeWidth={larghezza * 0.62}
+            opacity="0.16"
+            strokeDasharray="3 26"
+            strokeDashoffset="13"
+            className="corrente"
+          />
+        </>
+      )}
     </g>
   );
 }
 
-export function Acque() {
+export function Acque({ dettaglio }: Strato) {
   return (
     <g>
-      <Braccio punti={FIUME_EST} larghezza={22} />
-      <Braccio punti={FIUME_OVEST} larghezza={21} />
+      <Braccio punti={FIUME_EST} larghezza={22} dettaglio={dettaglio} />
+      <Braccio punti={FIUME_OVEST} larghezza={21} dettaglio={dettaglio} />
 
       {/* La Bocca si allarga scendendo: è l'unica apertura dell'anello. */}
       <g>
@@ -305,14 +354,31 @@ export function Acque() {
 
       <g>
         <path
-          d={macchia(POZZA.cx, POZZA.cy, POZZA.rx + 6, caso(414), { punte: 11, irregolare: 0.22, schiaccia: POZZA.ry / POZZA.rx })}
+          d={macchia(POZZA.cx, POZZA.cy, POZZA.rx + 7, caso(414), { punte: 11, irregolare: 0.22, schiaccia: POZZA.ry / POZZA.rx })}
           fill="var(--tav-fiume-riva)"
-          opacity="0.5"
+          opacity="0.6"
         />
         <path
           d={macchia(POZZA.cx, POZZA.cy, POZZA.rx, caso(415), { punte: 11, irregolare: 0.2, schiaccia: POZZA.ry / POZZA.rx })}
           fill="url(#g-fiume)"
         />
+        {/* Da vicino: le canne sulla riva a settentrione e due giri d'increspatura. */}
+        {dettaglio && (
+          <g>
+            <g stroke="var(--tav-bosco-luce)" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.75">
+              {Array.from({ length: 14 }, (_, i) => {
+                const a = Math.PI + (i / 13) * Math.PI * 0.9;
+                const x = POZZA.cx + Math.cos(a) * (POZZA.rx + 2);
+                const y = POZZA.cy + Math.sin(a) * (POZZA.ry + 1);
+                return <path key={i} d={`M${x.toFixed(1)} ${y.toFixed(1)}q${(i % 3) - 1} -4 ${(i % 3) - 1.4} -8`} />;
+              })}
+            </g>
+            <g fill="none" stroke="var(--tav-fiume-chiaro)" strokeWidth="1.1" opacity="0.55">
+              <ellipse cx={POZZA.cx + 6} cy={POZZA.cy + 3} rx={POZZA.rx * 0.62} ry={POZZA.ry * 0.55} />
+              <ellipse cx={POZZA.cx + 8} cy={POZZA.cy + 4} rx={POZZA.rx * 0.34} ry={POZZA.ry * 0.3} />
+            </g>
+          </g>
+        )}
         <ellipse cx={POZZA.cx - 10} cy={POZZA.cy - 5} rx={POZZA.rx * 0.4} ry={POZZA.ry * 0.34} fill="var(--tav-fiume-chiaro)" opacity="0.6" />
       </g>
     </g>
@@ -455,10 +521,14 @@ export function Montagne({ vista }: Strato) {
       {/* Le nuvole si impigliano fra la cresta alta e quella di mezzo: è quello
           che le fa stare *dentro* la montagna invece che davanti. */}
       <g fill="#fff" opacity="0.5" filter="url(#f-sfoca)">
-        <ellipse cx="300" cy="214" rx="76" ry="24" />
-        <ellipse cx="366" cy="238" rx="48" ry="15" />
-        <ellipse cx="708" cy="204" rx="68" ry="22" />
-        <ellipse cx="652" cy="228" rx="42" ry="14" />
+        <g className="nuvole">
+          <ellipse cx="300" cy="214" rx="76" ry="24" />
+          <ellipse cx="366" cy="238" rx="48" ry="15" />
+        </g>
+        <g className="nuvole nuvole--lente">
+          <ellipse cx="708" cy="204" rx="68" ry="22" />
+          <ellipse cx="652" cy="228" rx="42" ry="14" />
+        </g>
       </g>
 
       <path d={curva(RILIEVO.mezza)} fill="var(--tav-roccia)" filter="url(#f-acquerello)" />
@@ -496,8 +566,8 @@ const TONI: Record<string, readonly string[]> = {
   secco: ["var(--tav-bosco-secco)", "var(--tav-bosco-luce)", "var(--tav-bosco-secco)"],
 };
 
-/** Un albero piantato: il simbolo da richiamare e dove. */
-type Pianta = { href: string; x: number; y: number; tono: string };
+/** Un albero piantato: quale chioma, dove, di che verde. */
+type Pianta = { forma: string; fitto: boolean; x: number; y: number; tono: string };
 
 const pianta = (
   rnd: () => number,
@@ -508,7 +578,8 @@ const pianta = (
 ): Pianta => {
   const r = fra(rnd, raggio[0], raggio[1]);
   return {
-    href: chioma(Math.floor(fra(rnd, 0, 3)), r, fitto),
+    forma: chioma(Math.floor(fra(rnd, 0, 3)), r),
+    fitto,
     x: Math.round(p[0]),
     y: Math.round(p[1]),
     tono: scegli(rnd, toni),
@@ -577,7 +648,7 @@ const RIVE = perTono(
 );
 
 /** Un gruppo di alberi per tono: un `use` a testa, nient'altro. */
-function Piante({ campi, vista }: { campi: [string, Pianta[]][]; vista: Inquadratura }) {
+function Piante({ campi, vista, dettaglio }: { campi: [string, Pianta[]][] } & Strato) {
   return (
     <>
       {campi.map(([tono, piante]) => {
@@ -587,7 +658,7 @@ function Piante({ campi, vista }: { campi: [string, Pianta[]][]; vista: Inquadra
         return (
           <g color={tono} key={tono}>
             {dentro.map((a, k) => (
-              <use key={k} href={a.href} x={a.x} y={a.y} />
+              <use key={k} href={`#${famiglia(a.fitto, dettaglio)}${a.forma}`} x={a.x} y={a.y} />
             ))}
           </g>
         );
@@ -596,7 +667,7 @@ function Piante({ campi, vista }: { campi: [string, Pianta[]][]; vista: Inquadra
   );
 }
 
-export function Boschi({ vista }: Strato) {
+export function Boschi({ vista, dettaglio }: Strato) {
   return (
     <g>
       {/* Sotto la Foresta Intrecciata il terreno è più scuro di quello intorno:
@@ -604,10 +675,10 @@ export function Boschi({ vista }: Strato) {
       <path d={curva(frastaglia(FORESTA, caso(11), 14))} fill="var(--tav-bosco)" opacity="0.9" filter="url(#f-acquerello)" />
       <path d={curva(frastaglia(verso(FORESTA, 0.86), caso(12), 12))} fill="var(--tav-bosco-ombra)" opacity="0.45" filter="url(#f-acquerello)" />
 
-      <Piante campi={ALBERI} vista={vista} />
+      <Piante campi={ALBERI} vista={vista} dettaglio={dettaglio} />
 
-      <Piante campi={FASCIA_COSTIERA} vista={vista} />
-      <Piante campi={RIVE} vista={vista} />
+      <Piante campi={FASCIA_COSTIERA} vista={vista} dettaglio={dettaglio} />
+      <Piante campi={RIVE} vista={vista} dettaglio={dettaglio} />
 
       <g color="var(--tav-bosco-ombra)">
         {CIPRESSI.filter(([x, y]) => inVista(vista, x, y)).map(([x, y], i) => (
@@ -622,29 +693,41 @@ export function Boschi({ vista }: Strato) {
 
 /*
  * I campi a cerchi concentrici, che sulla tavola sono la cosa più
- * riconoscibile dell'isola dopo l'Albero. Non è un disco marrone con sopra dei
- * pallini: è una radura chiara aperta nel bosco, con i solchi che girano e le
- * file di colture piantate lungo il solco. Le file si disegnano come trattini
- * orientati come il giro — un punto tondo non dice da che parte si zappa.
+ * riconoscibile dell'isola dopo l'Albero.
+ *
+ * Non sono anelli disegnati col compasso: sono **fasce di terra**, una dentro
+ * l'altra, ciascuna col suo colore perché ciascuna ha la sua coltura. Fra una
+ * fascia e l'altra corre il solco, e dentro le fasce le file seguono il giro —
+ * un trattino orientato come il cerchio dice da che parte si zappa, un punto
+ * tondo no.
  */
+const FASCE = Array.from({ length: ORTI.giri }, (_, g) => {
+  const k = 1 - g / ORTI.giri;
+  return {
+    rx: ORTI.rx * k,
+    ry: ORTI.ry * k,
+    /* Si alternano: una a maggese, che resta terra, e una coltivata, verde. */
+    colore: g % 2 ? "var(--tav-prato-scuro)" : "var(--tav-orto)",
+  };
+});
+
 const COLTURE = (() => {
   const rnd = caso(2440);
   const file: { d: string; fiore: boolean }[] = [];
 
   for (let g = 0; g < ORTI.giri; g++) {
-    const k = (g + 0.6) / ORTI.giri;
-    const quanti = 14 + g * 10;
+    const k = (g + 0.55) / ORTI.giri;
+    const quanti = 16 + g * 12;
 
     for (let i = 0; i < quanti; i++) {
-      const a = (i / quanti) * Math.PI * 2 + fra(rnd, -0.06, 0.06);
+      const a = (i / quanti) * Math.PI * 2 + fra(rnd, -0.05, 0.05);
       const x = ORTI.cx + Math.cos(a) * ORTI.rx * k;
       const y = ORTI.cy + Math.sin(a) * ORTI.ry * k;
-      /* Il trattino segue la tangente del giro: è il verso del filare. */
-      const dx = -Math.sin(a) * fra(rnd, 5, 9);
-      const dy = Math.cos(a) * fra(rnd, 4, 7);
+      const dx = -Math.sin(a) * fra(rnd, 3, 5.5);
+      const dy = Math.cos(a) * fra(rnd, 3, 5.5);
       file.push({
         d: `M${(x - dx / 2).toFixed(1)} ${(y - dy / 2).toFixed(1)}l${dx.toFixed(1)} ${dy.toFixed(1)}`,
-        fiore: rnd() > 0.62,
+        fiore: rnd() > 0.7,
       });
     }
   }
@@ -652,7 +735,19 @@ const COLTURE = (() => {
   return file;
 })();
 
-export function Orti({ vista }: Strato) {
+/* Il muretto a secco: sassi veri, non una linea tratteggiata. */
+const MURETTO_ORTI = Array.from({ length: 44 }, (_, i) => {
+  const rnd = caso(2450 + i);
+  const a = (i / 44) * Math.PI * 2;
+  return {
+    x: Math.round(ORTI.cx + Math.cos(a) * (ORTI.rx + 13)),
+    y: Math.round(ORTI.cy + Math.sin(a) * (ORTI.ry + 11)),
+    v: i % 8,
+    r: fra(rnd, 4, 7),
+  };
+});
+
+export function Orti({ vista, dettaglio }: Strato) {
   if (!tocca(vista, ORTI.cx - ORTI.rx - 30, ORTI.cy - ORTI.ry - 30, (ORTI.rx + 30) * 2, (ORTI.ry + 30) * 2)) {
     return null;
   }
@@ -661,50 +756,42 @@ export function Orti({ vista }: Strato) {
     <g>
       {/* La radura: gli orti stanno in un'apertura del bosco, non sul bosco. */}
       <path
-        d={macchia(ORTI.cx, ORTI.cy, ORTI.rx + 20, caso(2441), { punte: 13, irregolare: 0.16, schiaccia: ORTI.ry / ORTI.rx })}
+        d={macchia(ORTI.cx, ORTI.cy, ORTI.rx + 22, caso(2441), { punte: 13, irregolare: 0.16, schiaccia: ORTI.ry / ORTI.rx })}
         fill="var(--tav-prato-chiaro)"
         filter="url(#f-acquerello)"
       />
-      <path
-        d={macchia(ORTI.cx, ORTI.cy, ORTI.rx + 6, caso(2442), { punte: 13, irregolare: 0.14, schiaccia: ORTI.ry / ORTI.rx })}
-        fill="var(--tav-orto)"
-        opacity="0.55"
-        filter="url(#f-acquerello)"
-      />
 
-      {/* I solchi: quattro giri, uno dentro l'altro. */}
-      <g fill="none" stroke="var(--tav-orto-riga)" strokeWidth="2.2" opacity="0.6">
-        {Array.from({ length: ORTI.giri }, (_, g) => {
-          const k = (g + 1) / ORTI.giri;
-          return <ellipse key={g} cx={ORTI.cx} cy={ORTI.cy} rx={(ORTI.rx * k).toFixed(1)} ry={(ORTI.ry * k).toFixed(1)} />;
-        })}
-      </g>
-
-      <g strokeWidth="3.4" strokeLinecap="round" fill="none">
-        {COLTURE.map((c, i) => (
-          <path key={i} d={c.d} stroke={c.fiore ? "var(--tav-orto-fiore)" : "var(--tav-fogliame-luce)"} opacity="0.8" />
+      <g filter="url(#f-acquerello)">
+        {FASCE.map((f, g) => (
+          <ellipse key={g} cx={ORTI.cx} cy={ORTI.cy} rx={f.rx.toFixed(1)} ry={f.ry.toFixed(1)} fill={f.colore} opacity="0.85" />
         ))}
       </g>
 
-      {/* Il muretto a secco che chiude gli orti. */}
-      <ellipse
-        cx={ORTI.cx}
-        cy={ORTI.cy}
-        rx={ORTI.rx + 14}
-        ry={ORTI.ry + 12}
-        fill="none"
-        stroke="var(--tav-roccia-ombra)"
-        strokeWidth="3"
-        opacity="0.45"
-        strokeDasharray="9 7"
-      />
+      {/* I solchi fra una fascia e l'altra. */}
+      <g fill="none" stroke="var(--tav-orto-riga)" strokeWidth="1.6" opacity="0.5">
+        {FASCE.map((f, g) => (
+          <ellipse key={g} cx={ORTI.cx} cy={ORTI.cy} rx={f.rx.toFixed(1)} ry={f.ry.toFixed(1)} />
+        ))}
+      </g>
+
+      <g strokeWidth={dettaglio ? 2.6 : 3.2} strokeLinecap="round" fill="none">
+        {COLTURE.map((c, i) => (
+          <path key={i} d={c.d} stroke={c.fiore ? "var(--tav-orto-fiore)" : "var(--tav-fogliame-luce)"} opacity="0.6" />
+        ))}
+      </g>
+
+      <g>
+        {MURETTO_ORTI.filter((m) => inVista(vista, m.x, m.y)).map((m, i) => (
+          <use key={i} href={sasso(m.v, m.r)} x={m.x} y={m.y} fill="var(--tav-roccia)" opacity="0.75" />
+        ))}
+      </g>
     </g>
   );
 }
 
 /* ---------- i sentieri ---------- */
 
-export function Sentieri() {
+export function Sentieri({ dettaglio }: Strato) {
   return (
     <g fill="none" strokeLinecap="round" strokeLinejoin="round">
       {SENTIERI.map((s, i) => {
@@ -713,6 +800,17 @@ export function Sentieri() {
           <g key={i}>
             <path d={d} stroke="var(--tav-sentiero-ombra)" strokeWidth="9" opacity="0.35" />
             <path d={d} stroke="var(--tav-sentiero)" strokeWidth="6" opacity="0.95" />
+            {/* Da vicino un sentiero non è una fettuccia: è terra battuta con i
+                sassi che affiorano nel mezzo. */}
+            {dettaglio && (
+              <path
+                d={d}
+                stroke="var(--tav-roccia-luce)"
+                strokeWidth="4"
+                opacity="0.35"
+                strokeDasharray="2 9"
+              />
+            )}
           </g>
         );
       })}
@@ -731,16 +829,34 @@ export function Sentieri() {
 /** Quanto è grande una casa sul foglio. Sotto 1.3 il villaggio si perde. */
 const SCALA_CASE = 1.4;
 
-function Casetta({ x, y, s, r }: Casa) {
+function Casetta({ x, y, s, r, dettaglio, camino = false }: Casa & { dettaglio: boolean; camino?: boolean }) {
   return (
     <g transform={`translate(${x} ${y}) scale(${(s * SCALA_CASE).toFixed(2)}) rotate(${r})`}>
       <ellipse cx="3" cy="1" rx="16" ry="5.5" fill="var(--tav-inchiostro)" opacity="0.22" />
       <path d="M-11 0v-9h22v9z" fill="var(--tav-muro)" />
       <path d="M4 0v-9h7v9z" fill="var(--tav-muro-ombra)" opacity="0.55" />
+      {camino && <rect x="6" y="-24" width="4" height="9" fill="var(--tav-muro-ombra)" />}
       <path d="M-14-8 -10-16h20l4 8z" fill="var(--tav-tetto)" />
       <path d="M-10-16h20l-3-6h-14z" fill="var(--tav-tetto-scuro)" />
       <path d="M-14-8 -10-16h20l4 8zM-10-16h20l-3-6h-14z" fill="none" stroke="var(--tav-inchiostro)" strokeWidth="1" opacity="0.5" />
       <rect x="-2" y="-6" width="4" height="6" fill="var(--tav-inchiostro)" opacity="0.55" />
+
+      {dettaglio && (
+        <g>
+          {/* I corsi di tegole, la finestra, la soglia: da lontano sarebbero
+              tre righe sporche, da vicino sono quello che fa la casa. */}
+          <path
+            d="M-12.7-10.6h25.4M-11.4-13.2h22.8"
+            fill="none"
+            stroke="var(--tav-tetto-scuro)"
+            strokeWidth="0.8"
+            opacity="0.55"
+          />
+          <rect x="-8.5" y="-6.5" width="3.6" height="3.2" fill="var(--tav-inchiostro)" opacity="0.45" />
+          <rect x="5" y="-6.5" width="3.6" height="3.2" fill="var(--tav-inchiostro)" opacity="0.45" />
+          <path d="M-3 0h6" fill="none" stroke="var(--tav-roccia-luce)" strokeWidth="1.4" opacity="0.7" />
+        </g>
+      )}
     </g>
   );
 }
@@ -758,25 +874,31 @@ function Capanna({ x, y, s, r }: Casa) {
   );
 }
 
-export function Villaggio({ vista }: Strato) {
+export function Villaggio({ vista, dettaglio }: Strato) {
   return (
     <g>
       {/* La piazza: terra battuta sotto l'Albero, dove sta il mercato. */}
-      <path
-        d={macchia(524, 862, 86, caso(919), { punte: 12, irregolare: 0.26, schiaccia: 0.66 })}
-        fill="var(--tav-sentiero)"
-        opacity="0.95"
-        filter="url(#f-acquerello)"
-      />
+      <g filter="url(#f-acquerello)">
+        <path
+          d={macchia(524, 866, 96, caso(919), { punte: 12, irregolare: 0.24, schiaccia: 0.62 })}
+          fill="var(--tav-sentiero)"
+          opacity="0.9"
+        />
+        <path
+          d={macchia(522, 864, 72, caso(920), { punte: 11, irregolare: 0.2, schiaccia: 0.62 })}
+          fill="var(--tav-sabbia)"
+          opacity="0.4"
+        />
+      </g>
 
       {CASE_VILLAGGIO.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
-        <Casetta key={`v${i}`} {...c} />
+        <Casetta key={`v${i}`} {...c} dettaglio={dettaglio} camino={i % 3 === 0} />
       ))}
       {CASE_FUOCO.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
-        <Casetta key={`f${i}`} {...c} />
+        <Casetta key={`f${i}`} {...c} dettaglio={dettaglio} camino={i % 2 === 0} />
       ))}
       {CAPANNE_SPIAGGIA.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
-        <Casetta key={`s${i}`} {...c} />
+        <Casetta key={`s${i}`} {...c} dettaglio={dettaglio} />
       ))}
       {CAPANNE_PASTORI.filter((c) => inVista(vista, c.x, c.y)).map((c, i) => (
         <Capanna key={`p${i}`} {...c} />
@@ -793,16 +915,32 @@ export function Villaggio({ vista }: Strato) {
         <rect x="-3" y="-7" width="6" height="7" rx="3" fill="var(--tav-inchiostro)" opacity="0.65" />
       </g>
 
-      {/* Il fumo, che sulla tavola sale piegato dal vento. */}
-      <path
-        d="M757 620c-9-14 6-22 0-36-5-12 8-18 4-30"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="13"
-        strokeLinecap="round"
-        opacity="0.45"
-        filter="url(#f-sfoca-corta)"
-      />
+      {/*
+       * Il fumo. Non è un tratto: un tratto sfocato, guardato da vicino, resta
+       * una sbarra. Sono batuffoli che salgono, si allargano e si consumano —
+       * piegati dal vento, come sulla tavola.
+       */}
+      <g fill="#fff" filter="url(#f-sfoca)">
+        {[
+          { x: 757, y: 616, r: 7, o: 0.5 },
+          { x: 752, y: 598, r: 9, o: 0.42 },
+          { x: 757, y: 578, r: 11, o: 0.34 },
+          { x: 750, y: 556, r: 13, o: 0.26 },
+          { x: 756, y: 532, r: 15, o: 0.18 },
+          { x: 748, y: 506, r: 17, o: 0.1 },
+        ].map((b, i) => (
+          <ellipse
+            key={i}
+            className="fumo"
+            style={{ animationDelay: `${i * 1.5}s` }}
+            cx={b.x}
+            cy={b.y}
+            rx={b.r}
+            ry={b.r * 0.8}
+            opacity={b.o}
+          />
+        ))}
+      </g>
 
       {/* Il ponte sul ramo est, dove il sentiero scavalca il Fiume che Gira. */}
       <g transform={`translate(${PONTE.x} ${PONTE.y}) rotate(${PONTE.inclinazione})`}>
@@ -859,7 +997,7 @@ const CHIOMA = (() => {
 
 const VERDE = ["var(--tav-bosco-ombra)", "var(--tav-bosco)", "var(--tav-bosco-luce)"];
 
-export function AlberoVecchio({ vista }: Strato) {
+export function AlberoVecchio({ vista, dettaglio }: Strato) {
   const { cx, cy, raggio, tronco } = ALBERO_VECCHIO;
 
   if (!tocca(vista, cx - raggio, cy - raggio, raggio * 2, tronco[1] - cy + raggio)) return null;
@@ -898,6 +1036,39 @@ export function AlberoVecchio({ vista }: Strato) {
         fill="var(--tav-fogliame-luce)"
         opacity="0.5"
       />
+
+      {/*
+       * Da vicino la chioma non basta: un albero si riconosce dai rami. Escono
+       * dal tronco, si allargano, e poi tornano sotto le foglie — che è quello
+       * che si vede di un albero grande guardato dall'alto: l'attacco dei rami,
+       * non dove vanno a finire. Le macchie che li chiudono sono lì per questo.
+       */}
+      {dettaglio && (
+        <g>
+          <g fill="none" stroke="var(--tav-tronco)" strokeLinecap="round" opacity="0.95">
+            <path d={`M${tronco[0] - 8} ${tronco[1] - 84}c-14-8 -26-16 -34-32`} strokeWidth="7" />
+            <path d={`M${tronco[0] + 6} ${tronco[1] - 88}c14-6 26-14 34-30`} strokeWidth="6" />
+            <path d={`M${tronco[0] - 2} ${tronco[1] - 92}c-4-18 -8-30 -22-42`} strokeWidth="5" />
+            <path d={`M${tronco[0] + 4} ${tronco[1] - 92}c6-16 14-26 26-34`} strokeWidth="4" />
+          </g>
+
+          <g filter="url(#f-acquerello)">
+            {[
+              [tronco[0] - 48, tronco[1] - 118],
+              [tronco[0] + 46, tronco[1] - 122],
+              [tronco[0] - 28, tronco[1] - 138],
+              [tronco[0] + 32, tronco[1] - 130],
+            ].map(([bx, by], i) => (
+              <path
+                key={i}
+                d={macchia(bx, by, 30, caso(880 + i), { punte: 9, irregolare: 0.4 })}
+                fill={i % 2 ? "var(--tav-bosco)" : "var(--tav-bosco-ombra)"}
+                opacity="0.9"
+              />
+            ))}
+          </g>
+        </g>
+      )}
     </g>
   );
 }

@@ -25,13 +25,16 @@ import {
   Acque, AlberoVecchio, Approdo, Boschi, Carta, Mare, Montagne, OmbraDeiMonti,
   Orti, Prati, Sentieri, Terra, Villaggio,
 } from "./strati";
+import { ErbaFitta, Legna, Mercato, Reti } from "./dettagli";
+import { Figure, type Figura } from "./figure";
 import { SimboliRipetuti } from "./simboli";
 import { COSTA_VERA } from "../geografia";
 import { ISOLA_INTERA, type Inquadratura, riquadro } from "../quartieri";
 import { stileTavola } from "../tavola";
+import { stileVita } from "../vita";
 import { curva } from "../tratto";
 
-function Definizioni() {
+function Definizioni({ dettaglio }: { dettaglio: boolean }) {
   return (
     <defs>
       {/* Il mare è chiaro attorno all'isola e si fa fondo solo negli angoli del
@@ -105,12 +108,14 @@ function Definizioni() {
         </feComponentTransfer>
       </filter>
 
-      <SimboliRipetuti />
+      <SimboliRipetuti dettaglio={dettaglio} />
 
       <g id="cipresso">
         <ellipse cx="2.6" cy="2.4" rx="6" ry="2.6" fill="var(--tav-inchiostro)" opacity="0.22" />
+        <rect x="-1" y="0" width="2" height="4" fill="var(--tav-tronco)" />
         <path d="M0 3c-4.4-2-5.6-10-4.4-17C-3.4-19-1.4-22 0-22s3.4 3 4.4 8C5.6-7 4.4 1 0 3z" fill="currentColor" />
-        <path d="M0 3c-1.6-2-2-10-1.6-17C-1.2-19-0.6-22 0-22z" fill="#fff" opacity="0.14" />
+        <path d="M0 3c-1.6-2-2-10-1.6-17C-1.2-19-0.6-22 0-22z" fill="#fff" opacity="0.16" />
+        <path d="M1.6-19c1.6 2.4 2.6 6 2.8 11 .2 4-.6 8-2.4 11 .6-4 .8-8 .4-12-.2-4-.6-7.4-.8-10z" fill="var(--tav-inchiostro)" opacity="0.2" />
       </g>
     </defs>
   );
@@ -141,7 +146,22 @@ export const descrizione = (vista: Inquadratura = ISOLA_INTERA) =>
  * cambia solo il riquadro, quindi le coordinate non si spostano mai e chi ci
  * mette dei segni sopra non ha niente da ricalcolare.
  */
-export function IsolaDisegnata({ vista = ISOLA_INTERA }: { vista?: Inquadratura }) {
+export function IsolaDisegnata({
+  vista = ISOLA_INTERA,
+  dettaglio = vista.id !== ISOLA_INTERA.id,
+  figure = [],
+}: {
+  vista?: Inquadratura;
+  /** Da vicino si disegnano cose che di lontano sarebbero sporco. */
+  dettaglio?: boolean;
+  /**
+   * Chi si vede in giro, già collocato da chi conosce il canone. Si disegnano
+   * solo col dettaglio: da lontano sarebbero animali grandi come case.
+   */
+  figure?: Figura[];
+}) {
+  const strato = { vista, dettaglio };
+
   return (
     <svg
       className="isola-disegnata"
@@ -151,9 +171,9 @@ export function IsolaDisegnata({ vista = ISOLA_INTERA }: { vista?: Inquadratura 
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>{descrizione(vista)}</title>
-      <style>{stileTavola()}</style>
+      <style>{`${stileTavola()}\n${stileVita()}`}</style>
 
-      <Definizioni />
+      <Definizioni dettaglio={dettaglio} />
 
       {/*
        * L'ordine è quello di una tavola dipinta: prima il fondo, poi quello che
@@ -162,18 +182,27 @@ export function IsolaDisegnata({ vista = ISOLA_INTERA }: { vista?: Inquadratura 
        * terreno invece di stargli appoggiato. L'ombra che gettano torna dopo,
        * quando il prato è già steso.
        */}
-      <Mare vista={vista} />
-      <Terra vista={vista} />
-      <Montagne vista={vista} />
-      <Prati vista={vista} />
-      <OmbraDeiMonti vista={vista} />
-      <Acque />
-      <Boschi vista={vista} />
-      <Orti vista={vista} />
-      <Sentieri />
-      <Villaggio vista={vista} />
-      <AlberoVecchio vista={vista} />
-      <Approdo vista={vista} />
+      <Mare {...strato} />
+      <Terra {...strato} />
+      <Montagne {...strato} />
+      <Prati {...strato} />
+      <OmbraDeiMonti {...strato} />
+      <Acque {...strato} />
+      <Boschi {...strato} />
+      <Orti {...strato} />
+      {dettaglio && <ErbaFitta vista={vista} />}
+      <Sentieri {...strato} />
+      <Villaggio {...strato} />
+      <AlberoVecchio {...strato} />
+      {dettaglio && (
+        <>
+          <Mercato vista={vista} />
+          <Legna vista={vista} />
+          <Reti vista={vista} />
+          <Figure figure={figure} vista={vista} />
+        </>
+      )}
+      <Approdo {...strato} />
       <Carta />
     </svg>
   );

@@ -90,11 +90,13 @@ Com'è fatto:
 
 | File | Cosa contiene |
 |---|---|
-| `lib/isola/tratto.ts` | la matita: caso governato, curve morbide, semine dentro una forma |
-| `lib/isola/geografia.ts` | dove stanno le cose, letto sulla tavola |
-| `lib/isola/tavola.ts` | i colori, campionati dalla tavola, con la coordinata del prelievo |
-| `components/isola/` | gli strati del disegno, dal mare alla grana della carta |
-| `app/isola.svg/route.ts` | il disegno servito come immagine |
+| `isola-mappa/` | l'asset: matita, geografia, tavolozza, quartieri, strati del disegno |
+| `isola-mappa/LEGGIMI.md` | come si usa e come si porta fuori da qui |
+| `lib/mappa-quartieri.ts` | il canone dei quartieri: nomi, luoghi, chi ci abita |
+| `lib/mappa-abitanti.ts` | dove sta ciascun abitante sul disegno |
+| `app/isola/[vista]/route.ts` | i disegni serviti come immagini, uno per riquadro |
+| `app/mappa/[quartiere]/page.tsx` | la pagina di un quartiere |
+| `components/mappa-camera.tsx` | l'ingrandimento su /mappa, senza cambiare pagina |
 
 Tre cose da sapere prima di metterci le mani:
 
@@ -112,6 +114,26 @@ Tre cose da sapere prima di metterci le mani:
 
 La tavola dipinta non è sparita: resta sulla pagina, sotto la mappa, a grandezza piena. Il
 vettoriale è quello che si consulta, la tavola è quella che si guarda.
+
+### I quartieri, da vicino
+
+Lo stesso disegno si guarda a pezzi. Ogni quartiere ha **il suo riquadro** (`isola-mappa/quartieri.ts`,
+letto sul disegno), **la sua immagine** (`/isola/fuoco.svg` e le altre) e **la sua pagina**
+(`/mappa/fuoco`), che porta il nome e la riga del canone, i luoghi che ci cadono dentro e chi ci
+sta di casa.
+
+Da vicino il disegno cambia: le case prendono tegole e finestre, l'erba si infittisce, il mercato
+apre sulla piazza, il fiume si increspa, e **compaiono gli abitanti** — dieci sagome, una per ogni
+personaggio a cui il canone assegna una casa. Sull'isola intera non ci sono: alla scala del foglio
+un abitante sarebbe grande come una casa, e le distanze contano.
+
+Su `/mappa` c'è anche una camera: si clicca un quartiere e la mappa ci si avvicina senza cambiare
+pagina. I pulsanti sono collegamenti veri — senza JavaScript portano alla pagina del quartiere, con
+JavaScript il primo clic guarda e il secondo entra. Niente controlli finti.
+
+Quanto alla precisione: una figura dice **il quartiere, non l'indirizzo**. Il canone colloca la Tana
+di Rovo nel quartiere di Terra, e la mappa lo mette lì attorno; dove sia esattamente la sua porta il
+canone non lo dice, e la mappa non se lo inventa.
 
 ### Immagini
 

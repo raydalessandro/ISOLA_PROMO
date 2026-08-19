@@ -40,6 +40,18 @@ const CHIOME = [0, 1, 2].flatMap((v) => {
 
   return MISURE.map((m, i) => ({
     id: `a${v}${i}`,
+    /* Il tronco e le ombre dentro la chioma: si vedono solo da vicino, e da
+       lontano sarebbero due granelli scuri sotto ogni albero. */
+    tronco: {
+      x: (-1.1 * m).toFixed(1),
+      y: (2 * m).toFixed(1),
+      larghezza: (2.2 * m).toFixed(1),
+      altezza: (3.4 * m).toFixed(1),
+    },
+    dentro: [
+      macchia(-1.6 * m, 1.2 * m, 3 * m, caso(97 + v * 11 + i), { punte: 7, irregolare: 0.45 }),
+      macchia(2.6 * m, -0.6 * m, 2.4 * m, caso(131 + v * 7 + i), { punte: 7, irregolare: 0.45 }),
+    ],
     corpo: corpo.map((c) =>
       macchia(Math.cos(c.a) * 3.2 * m, (Math.sin(c.a) * 2.4 - 1.4) * m, c.r * m, caso(1 + v * 7 + i), {
         punte: 9,
@@ -62,14 +74,27 @@ const CHIOME = [0, 1, 2].flatMap((v) => {
  * cespugli tondi invece che come una volta di rami. L'ombra serve all'albero
  * isolato in mezzo al prato, che senza galleggia.
  */
-export const chioma = (v: number, r: number, fitto = false) => {
+/**
+ * Quale chioma, di quale misura: si prende la misura più vicina a quel raggio.
+ *
+ * Torna solo la coda del nome — la famiglia la sceglie chi disegna, e sono tre:
+ * `a` con l'ombra a terra, per l'albero isolato in mezzo al prato; `b` senza
+ * ombra, per il bosco fitto, dove quattro ovali scuri sotto quattro chiome che
+ * si toccano diventano un punteggiato; `c` col tronco e le ombre dentro, per
+ * quando si guarda da vicino.
+ */
+export const chioma = (v: number, r: number) => {
   const m = r / 10;
   let vicina = 0;
   for (let i = 1; i < MISURE.length; i++) {
     if (Math.abs(MISURE[i] - m) < Math.abs(MISURE[vicina] - m)) vicina = i;
   }
-  return `#${fitto ? "b" : "a"}${v}${vicina}`;
+  return `${v}${vicina}`;
 };
+
+/** La famiglia di chiome giusta per come e dove si sta disegnando. */
+export const famiglia = (fitto: boolean, dettaglio: boolean) =>
+  dettaglio ? "c" : fitto ? "b" : "a";
 
 /* Gli scogli: otto sassi in tre misure, sparsi lungo la riva con `use`. */
 const SASSI = [0, 1, 2, 3, 4, 5, 6, 7].flatMap((v) => {
@@ -84,20 +109,45 @@ const SASSI = [0, 1, 2, 3, 4, 5, 6, 7].flatMap((v) => {
 
 export const sasso = (v: number, r: number) => `#s${v}${r < 6 ? 0 : r < 9 ? 1 : 2}`;
 
-export function SimboliRipetuti() {
+/**
+ * Si dichiarano solo le chiome che si useranno.
+ *
+ * Le famiglie sono tre e quella da vicino non serve mai insieme alle altre due:
+ * dichiararle tutte vorrebbe dire portarsi dietro in ogni file trenta disegni
+ * che quel file non richiama. Sono trenta kilobyte a immagine, per niente.
+ */
+export function SimboliRipetuti({ dettaglio }: { dettaglio: boolean }) {
   return (
     <>
-      {CHIOME.map((c) => (
-        <g id={c.id} key={c.id}>
-          <ellipse cx={c.ombraTerra.cx.toFixed(1)} cy={c.ombraTerra.cy.toFixed(1)} rx={c.ombraTerra.rx.toFixed(1)} ry={c.ombraTerra.ry.toFixed(1)} fill="var(--tav-inchiostro)" opacity="0.18" />
-          <use href={`#${c.id.replace("a", "b")}`} />
-        </g>
-      ))}
+      {!dettaglio &&
+        CHIOME.map((c) => (
+          <g id={c.id} key={c.id}>
+            <ellipse cx={c.ombraTerra.cx.toFixed(1)} cy={c.ombraTerra.cy.toFixed(1)} rx={c.ombraTerra.rx.toFixed(1)} ry={c.ombraTerra.ry.toFixed(1)} fill="var(--tav-inchiostro)" opacity="0.18" />
+            <use href={`#${c.id.replace("a", "b")}`} />
+          </g>
+        ))}
 
-      {CHIOME.map((c) => (
+      {!dettaglio && CHIOME.map((c) => (
         <g id={c.id.replace("a", "b")} key={c.id}>
           {c.corpo.map((d, k) => (
             <path key={k} d={d} fill="currentColor" />
+          ))}
+          <path d={c.ombra} fill="var(--tav-inchiostro)" opacity="0.22" />
+          <path d={c.luce} fill="#fff" opacity="0.22" />
+        </g>
+      ))}
+
+      {/* Gli stessi alberi, ma da vicino: il tronco sotto e due ombre dentro la
+          chioma. Un albero senza tronco, guardato da due passi, è un cespuglio. */}
+      {dettaglio && CHIOME.map((c) => (
+        <g id={c.id.replace("a", "c")} key={c.id}>
+          <ellipse cx={c.ombraTerra.cx.toFixed(1)} cy={c.ombraTerra.cy.toFixed(1)} rx={c.ombraTerra.rx.toFixed(1)} ry={c.ombraTerra.ry.toFixed(1)} fill="var(--tav-inchiostro)" opacity="0.18" />
+          <rect x={c.tronco.x} y={c.tronco.y} width={c.tronco.larghezza} height={c.tronco.altezza} fill="var(--tav-tronco)" />
+          {c.corpo.map((d, k) => (
+            <path key={k} d={d} fill="currentColor" />
+          ))}
+          {c.dentro.map((d, k) => (
+            <path key={k} d={d} fill="var(--tav-inchiostro)" opacity="0.16" />
           ))}
           <path d={c.ombra} fill="var(--tav-inchiostro)" opacity="0.22" />
           <path d={c.luce} fill="#fff" opacity="0.22" />

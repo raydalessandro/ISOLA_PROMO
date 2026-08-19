@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { baseUrlDelSito } from "@/lib/base-url";
+import { QUARTIERI_SITO } from "@/lib/mappa-quartieri";
 
 /*
  * Le superfici pubbliche, in ordine di importanza. `/offline` resta fuori: è la
@@ -17,8 +18,11 @@ const SUPERFICI = [
   { percorso: "/libro", priorita: 0.9 },
   { percorso: "/giornate", priorita: 0.8 },
   { percorso: "/mappa", priorita: 0.8 },
+  /* I quartieri: cinque pagine vere, una per pezzo d'isola. Si linkano e si
+     trovano, e funzionano senza JavaScript — la camera su /mappa e' un di piu'. */
+  ...QUARTIERI_SITO.map((q) => ({ percorso: `/mappa/${q.url}`, priorita: 0.6 })),
   { percorso: "/gioco", priorita: 0.7 },
-] as const;
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = baseUrlDelSito();

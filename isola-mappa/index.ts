@@ -11,6 +11,7 @@
  */
 
 export { IsolaDisegnata, descrizione } from "./disegno/isola";
+export { type Figura, type NomeSagoma } from "./disegno/figure";
 export { FOGLIO } from "./geografia";
 export {
   camera, ISOLA_INTERA, type Inquadratura, inquadratura, QUARTIERI, riquadro,

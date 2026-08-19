@@ -18,6 +18,7 @@
 import { createElement } from "react";
 
 import { ISOLA_INTERA, IsolaDisegnata, QUARTIERI, inquadratura } from "@/isola-mappa";
+import { figureDellaMappa } from "@/lib/mappa-abitanti";
 
 export const dynamic = "force-static";
 /* Le inquadrature sono cinque più l'isola intera: fuori da quelle non c'è
@@ -36,7 +37,12 @@ export async function GET(_richiesta: Request, contesto: { params: Promise<{ vis
      sapere che qui serve a stampare un'immagine e non a rendere una pagina. */
   const { renderToStaticMarkup } = await import("react-dom/server");
   const disegno = renderToStaticMarkup(
-    createElement(IsolaDisegnata, { vista: inquadratura(vista.replace(/\.svg$/, "")) }),
+    createElement(IsolaDisegnata, {
+      vista: inquadratura(vista.replace(/\.svg$/, "")),
+      /* Gli abitanti li conosce il sito, non il disegno: qui si passano già
+         collocati, e il disegno li mette in scena solo da vicino. */
+      figure: figureDellaMappa(),
+    }),
   );
 
   return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n${disegno}`, {

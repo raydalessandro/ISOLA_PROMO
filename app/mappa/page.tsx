@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 
 import { MappaIsola } from "@/components/mappa-isola";
+import { QUARTIERI_SITO, vociDelQuartiere } from "@/lib/mappa-quartieri";
 
 export const metadata: Metadata = {
   title: "La mappa",
@@ -92,7 +93,16 @@ export default function Mappa() {
           ))}
         </div>
 
-        <MappaIsola />
+        <MappaIsola
+          quartieri={QUARTIERI_SITO.map((q) => ({
+            url: q.url,
+            vista: q.vista,
+            nome: vociDelQuartiere(q).nome,
+            /* Sui pulsanti sta il nome corto: "Il quartiere d'Aria" non ci sta,
+               e comunque la pagina che si apre lo dice per esteso. */
+            breve: vociDelQuartiere(q).nome.replace(/^Il (quartiere d[i’']\s*)?/i, ""),
+          }))}
+        />
 
         {/*
           La tavola dipinta resta, sotto la mappa: è quella stampata nel libro, e
